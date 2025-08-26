@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Essentials -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nova — Modern Starter</title>
+  <meta name="description" content="Nova is a sleek, accessible, fully responsive starter website with dark mode, animations, and clean typography." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop stop-color='%2300e5ff'/%3E%3Cstop offset='1' stop-color='%238a2be2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath d='M18 44l14-24 14 24h-6l-8-14-8 14z' fill='white'/%3E%3C/svg%3E" />
+  <!-- Open Graph / Twitter -->
+  <meta property="og:title" content="Nova — Modern Starter" />
+  <meta property="og:description" content="A beautiful, production-ready starter site with dark mode, pricing, FAQ, and more." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://dummyimage.com/1200x630/0ea5e9/ffffff&text=Nova" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <style>
+    /* -------------------------
+       Design Tokens & Theming
+    --------------------------*/
+    :root {
+      --bg: #0b0c10;
+      --panel: #0f1117;
+      --text: #e7e9ee;
+      --muted: #b6bdc6;
+      --primary: #8b5cf6;   /* violet-500 */
+      --primary-600:#7c3aed;
+      --primary-700:#6d28d9;
+      --accent: #06b6d4;    /* cyan-500 */
+      --ok: #22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+
+      --ring: 0 0 0 4px color-mix(in oklab, var(--primary) 35%, transparent);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --shadow-md: 0 10px 30px color-mix(in oklab, #000 72%, transparent);
+      --shadow-sm: 0 4px 16px color-mix(in oklab, #000 70%, transparent);
+
+      --font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol";
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --container: clamp(980px, 86vw, 1180px);
+      --space: clamp(20px, 3vw, 32px);
+      --space-lg: clamp(40px, 6vw, 72px);
+
+      --grad: conic-gradient(from 140deg at 50% 50%, #22d3ee, #8b5cf6, #f472b6, #22d3ee);
+      --glass: color-mix(in oklab, var(--panel) 85%, transparent);
+    }
+:root[data-theme="dark"] {
+  --bg: #0b0c10;
+  --panel: #0f1117;
+  --text: #e7e9ee;
+  --muted: #b6bdc6;
+  --shadow-md: 0 10px 30px color-mix(in oklab, #000 72%, transparent);
+  --shadow-sm: 0 4px 16px color-mix(in oklab, #000 70%, transparent);
+}
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f8fafc;
+        --panel: #ffffff;
+        --text: #0b1020;
+        --muted: #5d6470;
+        --shadow-md: 0 10px 30px rgba(2,12,27,.06);
+        --shadow-sm: 0 4px 16px rgba(2,12,27,.06);
+      }
+    }
+
+    :root[data-theme="light"] {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --text: #0b1020;
+      --muted: #5d6470;
+      --shadow-md: 0 10px 30px rgba(2,12,27,.06);
+      --shadow-sm: 0 4px 16px rgba(2,12,27,.06);
+    }
+
+    /* Base Reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 120% -10%, color-mix(in oklab, var(--accent) 12%, transparent), transparent 60%),
+        radial-gradient(900px 600px at -10% 0%, color-mix(in oklab, var(--primary) 12%, transparent), transparent 60%),
+        var(--bg);
+      line-height: 1.6;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(100% - var(--space) * 2, var(--container)); margin-inline: auto; }
+
+    /* Utility */
+    .btn {
+      --_bg: var(--primary);
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      color: #fff; font-weight: 650; letter-spacing: .2px;
+      box-shadow: var(--shadow-sm);
+      background: linear-gradient(180deg, color-mix(in oklab, var(--_bg) 88%, #fff 0%), var(--_bg));
+      border: 1px solid color-mix(in oklab, var(--_bg) 60%, #000 0%);
+      transition: transform .15s ease, filter .2s ease, background .3s ease;
+    }
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    .btn:focus-visible { outline: none; box-shadow: var(--ring); }
+    .btn.ghost {
+      --_bg: transparent; color: var(--text);
+      background: linear-gradient(180deg, color-mix(in oklab, var(--panel) 30%, transparent), transparent);
+      border: 1px solid color-mix(in oklab, var(--muted) 30%, transparent);
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: 6px 10px; border-radius: 100px;
+      background: color-mix(in oklab, var(--panel) 74%, transparent);
+      border: 1px solid color-mix(in oklab, var(--muted) 30%, transparent);
+      color: var(--muted); font-weight: 600; font-size: .875rem;
+    }
+    .grid {
+      display: grid; gap: 22px;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid color-mix(in oklab, var(--muted) 18%, transparent);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+    .muted { color: var(--muted); }
+    .sr-only { position: absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+
+    /* Header */
+    header.site {
+      position: sticky; top: 0; z-index: 60;
+      backdrop-filter: saturate(140%) blur(8px);
+      background: color-mix(in oklab, var(--panel) 75%, transparent);
+      border-bottom: 1px solid color-mix(in oklab, var(--muted) 14%, transparent);
+    }
+    .nav { display:flex; align-items:center; justify-content:space-between; height:66px; }
+    .brand {
+      display:flex; align-items:center; gap: 10px; font-weight: 800; letter-spacing:.2px;
+    }
+    .brand .logo {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: var(--grad); display:grid; place-items:center; color:#fff; font-weight:800;
+      box-shadow: 0 6px 18px color-mix(in oklab, var(--primary) 35%, transparent);
+    }
+    .navlinks { display:flex; align-items:center; gap: 18px; }
+    .navlinks a { padding:8px 10px; border-radius: 8px; }
+    .navlinks a:hover, .navlinks a[aria-current="page"] {
+      background: color-mix(in oklab, var(--panel) 40%, transparent);
+    }
+    .theme-toggle, .menu-toggle {
+      display:grid; place-items:center; width:40px; height:40px; border-radius:10px;
+      border: 1px solid color-mix(in oklab, var(--muted) 22%, transparent);
+      background: color-mix(in oklab, var(--panel) 60%, transparent);
+      cursor: pointer;
+    }
+    .menu-toggle { display:none; }
+
+    /* Hero */
+    .hero {
+      padding: calc(var(--space-lg) + 24px) 0 var(--space-lg);
+      position: relative;
+      isolation: isolate;
+    }
+    .hero .bg-orb {
+      position: absolute; inset: -10% -20% auto auto;
+      width: min(600px, 60vw); aspect-ratio: 1/1; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff3, #0000 40%),
+                  radial-gradient(circle at 70% 60%, #fff2, #0000 32%),
+                  var(--grad);
+      filter: blur(40px) saturate(130%); opacity: .25; z-index:-1;
+      mask: radial-gradient(60% 60% at 60% 50%, #000 40%, transparent 61%);
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 4vw + 1rem, 4rem);
+      line-height: 1.05; letter-spacing: -.02em; margin: 12px 0 16px;
+    }
+    .hero p { font-size: clamp(1rem, 1.2vw + .8rem, 1.25rem); color: var(--muted); }
+    .hero-cta { display:flex; gap:12px; flex-wrap: wrap; margin-top: 18px; }
+    .hero .preview {
+      margin-top: 34px; border-radius: var(--radius); overflow: clip;
+      border: 1px solid color-mix(in oklab, var(--muted) 18%, transparent);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Sections */
+    section { padding: var(--space-lg) 0; }
+    .section-head { display:flex; align-items:baseline; justify-content:space-between; gap: 12px; margin-bottom: 20px; }
+    .section-head h2 { font-size: clamp(1.6rem, 2.5vw + 1rem, 2.4rem); margin:0; }
+    .section-head p { margin:0; color: var(--muted); }
+
+    /* Features */
+    .feature {
+      grid-column: span 12; padding:18px;
+      display:grid; grid-template-columns: 58px 1fr; gap: 16px; align-items:start;
+    }
+    .feature .ico {
+      width: 58px; height: 58px; border-radius: 14px; background: var(--grad);
+      display:grid; place-items:center; color:#fff; font-size: 24px; box-shadow: var(--shadow-sm);
+    }
+    .feature h3 { margin: 4px 0 6px; }
+
+    /* Pricing */
+    .pricing-wrap { display:grid; gap: 18px; grid-template-columns: repeat(12,1fr); }
+    .plan { grid-column: span 12; padding: 22px; display:grid; gap: 14px; }
+    .plan.highlight { outline: 2px solid color-mix(in oklab, var(--primary) 50%, transparent); transform: translateY(-2px); }
+    .price { font-size: clamp(2rem, 2.4vw + 1rem, 2.8rem); font-weight: 800; display:flex; align-items:flex-end; gap: 8px; }
+    .price small { font-size: .9rem; color: var(--muted); font-weight: 600;}
+    .toggle {
+      display:inline-flex; align-items:center; gap: 12px; padding: 8px;
+      border-radius: 100px; background: color-mix(in oklab, var(--panel) 60%, transparent);
+      border: 1px solid color-mix(in oklab, var(--muted) 22%, transparent);
+    }
+    .switch {
+      inline-size: 48px; block-size: 28px; border-radius: 100px; position: relative;
+      background: color-mix(in oklab, var(--muted) 18%, transparent);
+      transition: background .2s ease;
+    }
+    .switch::after {
+      content:""; position:absolute; inset: 3px auto 3px 3px; width: 22px; border-radius: 100px;
+      background: #fff; transition: inset .2s ease; box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    }
+    .switch[data-checked="true"] { background: var(--primary); }
+    .switch[data-checked="true"]::after { inset: 3px 3px 3px auto; }
+
+    /* Testimonials */
+    .carousel { position: relative; overflow: hidden; }
+    .slides { display:flex; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+    .testimonial { min-width: 100%; padding: 24px; }
+    .testimonial .bubble {
+      background: var(--panel); border-radius: 16px; padding: 22px;
+      border: 1px solid color-mix(in oklab, var(--muted) 16%, transparent);
+      box-shadow: var(--shadow-sm);
+    }
+    .dots { display:flex; gap:8px; justify-content:center; padding-top: 12px; }
+    .dots button {
+      width: 10px; height: 10px; border-radius: 10px; border:0; background: color-mix(in oklab, var(--muted) 26%, transparent);
+    }
+    .dots button[aria-current="true"] { background: var(--primary); width: 22px; }
+.carousel {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+}
+
+.slides {
+  display: flex;
+  transition: transform 0.6s ease-in-out;
+}
+
+.testimonial p {
+  font-style: italic;
+  margin-bottom: 1rem;
+  color: var(--text, #333);
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.author img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.author span {
+  font-size: 0.85rem;
+  color: var(--muted, #666);
+}
+
+/* Tablet: 2 per view */
+@media (min-width: 600px) {
+  .testimonial {
+    flex: 0 0 50%;
+  }
+}
+
+/* Desktop: 3 per view */
+@media (min-width: 900px) {
+  .testimonial {
+    flex: 0 0 33.333%;
+  }
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: 0.5rem;
+}
+
+.dots button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background: #bbb;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.dots button[aria-current="true"] {
+  background: #333;
+}
+    /* FAQ */
+    details.faq {
+      background: var(--panel); border: 1px solid color-mix(in oklab, var(--muted) 18%, transparent);
+      border-radius: var(--radius-sm); padding: 14px 16px;
+    }
+    details.faq + details.faq { margin-top: 10px; }
+    details.faq[open] { outline: 2px solid color-mix(in oklab, var(--primary) 28%, transparent); }
+
+    /* Contact */
+    form.contact {
+      display:grid; gap: 14px;
+      grid-template-columns: repeat(12, 1fr);
+      background: var(--panel); padding: 18px; border-radius: var(--radius);
+      border: 1px solid color-mix(in oklab, var(--muted) 18%, transparent);
+      box-shadow: var(--shadow-sm);
+    }
+    .field { grid-column: span 12; display:grid; gap: 6px; }
+    .field.half { grid-column: span 6; }
+    label { font-weight: 650; }
+    input, textarea, select {
+      width: 100%; padding: 12px 12px; border-radius: 10px; border: 1px solid color-mix(in oklab, var(--muted) 24%, transparent);
+      background: color-mix(in oklab, var(--panel) 80%, transparent); color: var(--text);
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    input:focus, textarea:focus, select:focus { outline: none; box-shadow: var(--ring); border-color: var(--primary); }
+    .help { color: var(--muted); font-size: .9rem; }
+    .error { color: var(--danger); font-size: .9rem; }
+
+    /* Footer */
+    footer.site { padding: 30px 0; color: var(--muted); border-top: 1px solid color-mix(in oklab, var(--muted) 14%, transparent); }
+    .footgrid { display:grid; gap:18px; grid-template-columns: repeat(12, 1fr); }
+    .footgrid > div { grid-column: span 12; }
+
+    /* Decorative code card */
+    .code-card {
+      background:
+        linear-gradient(180deg, color-mix(in oklab, var(--panel) 70%, transparent), transparent),
+        repeating-linear-gradient( to bottom, color-mix(in oklab, var(--muted) 8%, transparent), transparent 32px);
+      border-radius: var(--radius); border: 1px solid color-mix(in oklab, var(--muted) 16%, transparent);
+      padding: 16px; font-family: var(--font-mono); font-size: .95rem; overflow:auto;
+    }
+    .kbd { background: color-mix(in oklab, var(--panel) 60%, transparent); padding: 3px 8px; border-radius: 6px; border: 1px solid color-mix(in oklab, var(--muted) 22%, transparent); }
+
+    /* Reveal Animations */
+    [data-reveal] { opacity: 0; transform: translateY(8px) scale(.99); transition: .6s cubic-bezier(.2,.7,.2,1);}
+    [data-reveal].visible { opacity: 1; transform: translateY(0) scale(1); }
+
+    /* Responsive */
+    @media (min-width: 720px) {
+      .feature { grid-column: span 6; }
+      .plan { grid-column: span 4; }
+      .footgrid > div { grid-column: span 3; }
+    }
+    @media (max-width: 980px) {
+      .menu-toggle { display:grid; }
+      .navlinks {
+        position: fixed; inset: 66px 12px auto 12px; transform-origin: top center;
+        background: var(--glass); border: 1px solid color-mix(in oklab, var(--muted) 22%, transparent);
+        border-radius: 14px; padding: 12px; display:none; flex-direction:column; gap:6px; box-shadow: var(--shadow-md);
+      }
+      .navlinks.show { display:flex; }
+    }
+
+    /* Back to top */
+    .to-top {
+      position: fixed; right: 16px; bottom: 16px; z-index: 40;
+      width: 42px; height: 42px; border-radius: 11px; display:grid; place-items:center;
+      background: var(--primary); color:#fff; border: 0; cursor: pointer; box-shadow: var(--shadow-sm);
+      opacity: 0; transform: translateY(8px); transition: .3s ease;
+    }
+    .to-top.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="site" data-reveal>
+    <div class="container nav" role="navigation" aria-label="Primary">
+      <a class="brand" href="#top">
+        <span class="logo" aria-hidden="true">N</span>
+        <span>Nova</span>
+      </a>
+
+      <nav class="navlinks" id="navlinks">
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#testimonials">Love</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+        <a href="#code" class="badge">New: Code Snippet</a>
+      </nav>
+
+      <div style="display:flex; gap:10px;">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="1.6"/></svg>
+        </button>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-controls="navlinks" aria-expanded="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <main id="top">
+    <section class="hero container" aria-labelledby="hero-title">
+      <div class="bg-orb" aria-hidden="true"></div>
+      <span class="badge" data-reveal>✨ Fully Styled Starter · A11y · Dark Mode</span>
+      <h1 id="hero-title" data-reveal>Build beautiful sites faster with <span style="background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;">Nova</span></h1>
+      <p data-reveal>Nova ships with smart defaults, fluid typography, elegant components, and tiny, pragmatic JavaScript. Copy, tweak, and launch. ✔️</p>
+      <div class="hero-cta" data-reveal>
+        <a href="#pricing" class="btn">Get Started</a>
+        <a href="#features" class="btn ghost">Explore Features</a>
+      </div>
+
+      <figure class="preview" data-reveal aria-label="Product preview">
+        <img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=1600&auto=format&fit=crop" alt="Team collaborating around laptops" />
+        <figcaption class="muted" style="padding:12px;">Clean UI • Accessible • Responsive</figcaption>
+      </figure>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="container" aria-labelledby="features-title">
+      <div class="section-head">
+        <h2 id="features-title">Features that matter</h2>
+        <p>All killer, no filler.</p>
+      </div>
+      <div class="grid">
+        <article class="feature card" data-reveal>
+          <div class="ico" aria-hidden="true">⚡</div>
+          <div>
+            <h3>Performance-first</h3>
+            <p class="muted">No heavy frameworks, just lean CSS & minimal JS for snappy loads and silky interactions.</p>
+          </div>
+        </article>
+
+        <article class="feature card" data-reveal>
+          <div class="ico" aria-hidden="true">🌓</div>
+          <div>
+            <h3>Auto Dark Mode</h3>
+            <p class="muted">Respects <code>prefers-color-scheme</code> and persists your choice locally.</p>
+          </div>
+        </article>
+
+        <article class="feature card" data-reveal>
+          <div class="ico" aria-hidden="true">♿</div>
+          <div>
+            <h3>Accessible by default</h3>
+            <p class="muted">Semantic HTML, focus styles, reduced motion friendly, and ARIA where it helps—not where it hurts.</p>
+          </div>
+        </article>
+
+        <article class="feature card" data-reveal>
+          <div class="ico" aria-hidden="true">🧩</div>
+          <div>
+            <h3>Composable components</h3>
+            <p class="muted">Cards, badges, toggles, carousels, accordions, forms—ready to copy & remix.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="container" aria-labelledby="pricing-title">
+      <div class="section-head">
+        <h2 id="pricing-title">Simple pricing</h2>
+        <div class="toggle" role="group" aria-label="Billing frequency">
+          <span class="muted">Monthly</span>
+          <button class="switch" id="billSwitch" type="button" aria-pressed="false" data-checked="false" aria-label="Toggle yearly billing"></button>
+          <span class="muted">Yearly <span class="badge" aria-label="Save 20%">Save 20%</span></span>
+        </div>
+      </div>
+
+      <div class="pricing-wrap">
+        <article class="plan card" data-reveal>
+          <h3>Starter</h3>
+          <div class="price"><span id="p1-price">$12</span><small>/mo</small></div>
+          <ul class="muted" role="list">
+            <li>✔️ 5 projects</li>
+            <li>✔️ Community support</li>
+            <li>✔️ Basic analytics</li>
+          </ul>
+          <button class="btn">Choose Starter</button>
+        </article>
+
+        <article class="plan card highlight" data-reveal>
+          <h3>Pro</h3>
+          <div class="price"><span id="p2-price">$24</span><small>/mo</small></div>
+          <ul class="muted" role="list">
+            <li>✔️ Unlimited projects</li>
+            <li>✔️ Priority support</li>
+            <li>✔️ Team collaboration</li>
+          </ul>
+          <button class="btn" style="--_bg: var(--accent)">Choose Pro</button>
+        </article>
+
+        <article class="plan card" data-reveal>
+          <h3>Enterprise</h3>
+          <div class="price"><span id="p3-price">$64</span><small>/mo</small></div>
+          <ul class="muted" role="list">
+            <li>✔️ SSO & SAML</li>
+            <li>✔️ Dedicated manager</li>
+            <li>✔️ Custom SLAs</li>
+          </ul>
+          <button class="btn">Talk to Sales</button>
+        </article>
+      </div>
+    </section>
+
+   <section class="carousel">
+  <div class="slides" id="slides">
+    
+    <div class="testimonial">
+      <p>"This platform transformed how I work. The UI is smooth and the experience is seamless!"</p>
+      <div class="author">
+        <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Profile picture of Sarah Lee">
+        <div>
+          <strong>Sarah Lee</strong><br>
+          <span>Product Designer</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial">
+      <p>"I love the responsive design. Everything just works perfectly on mobile and desktop."</p>
+      <div class="author">
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile picture of John Carter">
+        <div>
+          <strong>John Carter</strong><br>
+          <span>Frontend Developer</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial">
+      <p>"Super easy to use and the customer support is always helpful. Highly recommended!"</p>
+      <div class="author">
+        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Profile picture of Emily Watson">
+        <div>
+          <strong>Emily Watson</strong><br>
+          <span>Marketing Manager</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial">
+      <p>"One of the best investments our team has made. It saves us hours every week."</p>
+      <div class="author">
+        <img src="https://randomuser.me/api/portraits/men/76.jpg" alt="Profile picture of Michael Brown">
+        <div>
+          <strong>Michael Brown</strong><br>
+          <span>Team Lead</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial">
+      <p>"The animations and carousel flow are smooth. Looks very professional!"</p>
+      <div class="author">
+        <img src="https://randomuser.me/api/portraits/women/15.jpg" alt="Profile picture of Anna Green">
+        <div>
+          <strong>Anna Green</strong><br>
+          <span>UX Researcher</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial">
+      <p>"Dark mode and responsive layout out of the box? This is just perfect 👌"</p>
+      <div class="author">
+        <img src="https://randomuser.me/api/portraits/men/44.jpg" alt="Profile picture of David Smith">
+        <div>
+          <strong>David Smith</strong><br>
+          <span>Software Engineer</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="dots" id="dots"></div>
+</section>
+
+    <!-- Code sample -->
+    <section id="code" class="container" aria-labelledby="code-title">
+      <div class="section-head">
+        <h2 id="code-title">Developer‑friendly</h2>
+        <p>Pragmatic snippets you can use today.</p>
+      </div>
+      <div class="code-card" data-reveal aria-label="Example code">
+<pre><code>// Toggle a11y-friendly dark theme with persistence
+const root = document.documentElement;
+const current = localStorage.getItem('theme');
+if (current) root.dataset.theme = current;
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const next = root.dataset.theme === 'light' ? '' : 'light';
+  root.dataset.theme = next;
+  localStorage.setItem('theme', next);
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="container" aria-labelledby="faq-title">
+      <div class="section-head">
+        <h2 id="faq-title">FAQ</h2>
+        <p>Short answers to big questions.</p>
+      </div>
+
+      <details class="faq" data-reveal>
+        <summary><strong>Can I use Nova commercially?</strong></summary>
+        <p class="muted">Absolutely. Customize, brand, and deploy to any static host.</p>
+      </details>
+      <details class="faq" data-reveal>
+        <summary><strong>Does it support frameworks?</strong></summary>
+        <p class="muted">Nova is framework‑agnostic HTML/CSS/JS. It drops into React/Vue/Svelte or server‑rendered apps easily.</p>
+      </details>
+      <details class="faq" data-reveal>
+        <summary><strong>Is it accessible?</strong></summary>
+        <p class="muted">Yes. Semantic landmarks, focus styles, reduced motion aware, and roles where idiomatic.</p>
+      </details>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="container" aria-labelledby="contact-title">
+      <div class="section-head">
+        <h2 id="contact-title">Say hello</h2>
+        <p>We’re happy to help 🤝</p>
+      </div>
+
+      <form class="contact" data-reveal id="contactForm" novalidate>
+        <div class="field half">
+          <label for="name">Your name</label>
+          <input id="name" name="name" autocomplete="name" placeholder="Ada Lovelace" required />
+          <p class="error" id="nameError" role="alert" aria-live="polite"></p>
+        </div>
+
+        <div class="field half">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+          <p class="error" id="emailError" role="alert" aria-live="polite"></p>
+        </div>
+
+        <div class="field">
+          <label for="topic">Topic</label>
+          <select id="topic" name="topic">
+            <option>General</option>
+            <option>Partnership</option>
+            <option>Support</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" placeholder="How can we help?" required></textarea>
+          <p class="error" id="messageError" role="alert" aria-live="polite"></p>
+          <p class="help">By submitting, you agree to our friendly <a href="#!">terms</a>.</p>
+        </div>
+
+        <div class="field">
+          <button class="btn" type="submit">Send message</button>
+          <span class="badge" id="formStatus" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site">
+    <div class="container footgrid">
+      <div>
+        <div class="brand"><span class="logo" aria-hidden="true">N</span>Nova</div>
+        <p class="muted" style="margin-top:8px;">Made with care. Ship faster, sleep better.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul class="muted" role="list">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul class="muted" role="list">
+          <li><a href="#!">About</a></li>
+          <li><a href="#!">Careers</a></li>
+          <li><a href="#!">Press</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <ul class="muted" role="list">
+          <li><a href="#code">Code</a></li>
+          <li><a href="#!">Docs</a></li>
+          <li><a href="#!">Changelog</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container" style="margin-top:10px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+      <small class="muted">© <span id="year"></span> Nova Labs</small>
+      <div style="display:flex; gap:10px;">
+        <a class="badge" href="#!">Privacy</a>
+        <a class="badge" href="#!">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+  <button class="to-top" id="toTop" aria-label="Back to top" title="Back to top">↑</button>
+
+  <script>
+    // --- Theme toggle with persistence
+    (function themeInit(){
+      try {
+        const saved = localStorage.getItem('theme');
+        if (saved) document.documentElement.dataset.theme = saved;
+      } catch(e) {}
+    })();
+
+   const themeToggle = document.getElementById('themeToggle');
+const root = document.documentElement;
+
+// Load saved theme or fallback to dark
+(function themeInit(){
+  const saved = localStorage.getItem('theme') || 'dark';
+  root.dataset.theme = saved;
+  themeToggle.setAttribute('aria-pressed', saved === 'light');
+})();
+
+themeToggle.addEventListener('click', () => {
+  const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = next;
+  localStorage.setItem('theme', next);
+  themeToggle.setAttribute('aria-pressed', next === 'light');
+});
+
+    // --- Mobile menu
+    const menuToggle = document.getElementById('menuToggle');
+    const navlinks = document.getElementById('navlinks');
+    menuToggle.addEventListener('click', () => {
+      const open = navlinks.classList.toggle('show');
+      menuToggle.setAttribute('aria-expanded', open);
+    });
+    navlinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      navlinks.classList.remove('show'); menuToggle.setAttribute('aria-expanded', 'false');
+    }));
+
+    // --- Reveal on scroll (IntersectionObserver)
+    const reveal = document.querySelectorAll('[data-reveal]');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -10% 0px' });
+    reveal.forEach(el => io.observe(el));
+
+    // --- Pricing toggle
+    const billSwitch = document.getElementById('billSwitch');
+    const p1 = document.getElementById('p1-price');
+    const p2 = document.getElementById('p2-price');
+    const p3 = document.getElementById('p3-price');
+    let yearly = false;
+    const prices = {
+      monthly: [12, 24, 64],
+      yearly: [12*12*0.8, 24*12*0.8, 64*12*0.8] // 20% off
+    };
+    const fmt = (n) => `$${Math.round(n)}`;
+    function updatePrices(){
+      const tier = yearly ? 'yearly' : 'monthly';
+      [p1.textContent, p2.textContent, p3.textContent] = prices[tier].map(fmt);
+      document.querySelectorAll('.price small').forEach(s => s.textContent = yearly ? '/yr' : '/mo');
+    }
+    billSwitch.addEventListener('click', () => {
+      yearly = !yearly;
+      billSwitch.dataset.checked = String(yearly);
+      billSwitch.setAttribute('aria-pressed', String(yearly));
+      updatePrices();
+    });
+    updatePrices();
+
+   const slides = document.getElementById('slides');
+const dotsContainer = document.getElementById('dots');
+let idx = 0, dir = 1, timer;
+
+// Determine how many are visible based on CSS rules
+function getVisible() {
+  if (window.innerWidth >= 900) return 3;
+  if (window.innerWidth >= 600) return 2;
+  return 1;
+}
+
+// Create dots dynamically
+function makeDots() {
+  dotsContainer.innerHTML = '';
+  const totalCards = slides.children.length;
+  const visible = getVisible();
+  const totalPages = totalCards - visible + 1;
+
+  for (let i = 0; i < totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.setAttribute('aria-label', `Slide ${i+1}`);
+    btn.addEventListener('click', () => {
+      go(i);
+      startAuto();
+    });
+    dotsContainer.appendChild(btn);
+  }
+}
+
+// Go to slide
+function go(i) {
+  const totalCards = slides.children.length;
+  const visible = getVisible();
+  const totalPages = totalCards - visible + 1;
+
+  idx = Math.max(0, Math.min(i, totalPages - 1));
+  slides.style.transform = `translateX(${-idx * (100 / visible)}%)`;
+
+  Array.from(dotsContainer.children).forEach((d, n) => {
+    d.setAttribute('aria-current', n === idx ? 'true' : 'false');
+  });
+}
+
+// Auto advance with ping-pong effect
+function startAuto() {
+  stopAuto();
+  timer = setInterval(() => {
+    const totalCards = slides.children.length;
+    const visible = getVisible();
+    const totalPages = totalCards - visible + 1;
+
+    if (idx >= totalPages - 1) dir = -1;
+    else if (idx <= 0) dir = 1;
+    go(idx + dir);
+  }, 4000);
+}
+
+function stopAuto() {
+  clearInterval(timer);
+}
+
+// Pause on hover/focus
+const carousel = slides.parentElement;
+carousel.addEventListener('mouseenter', stopAuto);
+carousel.addEventListener('mouseleave', startAuto);
+carousel.addEventListener('focusin', stopAuto);
+carousel.addEventListener('focusout', startAuto);
+
+// Init
+makeDots();
+go(0);
+startAuto();
+window.addEventListener('resize', () => {
+  makeDots();
+  go(idx);
+});
+
+    // --- Contact form validation
+    const form = document.getElementById('contactForm');
+    const status = document.getElementById('formStatus');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const message = form.message.value.trim();
+
+      let ok = true;
+      const setErr = (id, msg) => { const el = document.getElementById(id); el.textContent = msg || ''; if (msg) ok=false; };
+      setErr('nameError', name ? '' : 'Please enter your name');
+      setErr('emailError', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? '' : 'Enter a valid email');
+      setErr('messageError', message.length >= 10 ? '' : 'Message should be at least 10 characters');
+
+      if (!ok) return;
+      // Fake submit (replace with fetch to your endpoint)
+      status.textContent = 'Sending…';
+      setTimeout(() => { status.textContent = 'Thanks! We’ll be in touch shortly.'; form.reset(); }, 700);
+    });
+
+    // --- Back to top
+    const toTop = document.getElementById('toTop');
+    window.addEventListener('scroll', () => {
+      const show = window.scrollY > 700;
+      toTop.classList.toggle('show', show);
+    });
+    toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // --- Current year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // --- Respect reduced motion
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mq.matches) {
+      document.documentElement.style.scrollBehavior = 'auto';
+    }
+  </script>
+</body>
+</html>
