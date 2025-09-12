@@ -604,16 +604,16 @@
         <p>Pragmatic snippets you can use today.</p>
       </div>
       <div class="code-card" data-reveal aria-label="Example code">
-<pre><code>// Toggle a11y-friendly dark theme with persistence
-const root = document.documentElement;
-const current = localStorage.getItem('theme');
-if (current) root.dataset.theme = current;
-
-document.getElementById('themeToggle').addEventListener('click', () => {
-  const next = root.dataset.theme === 'light' ? '' : 'light';
-  root.dataset.theme = next;
-  localStorage.setItem('theme', next);
-});</code></pre>
+              <pre><code>// Toggle a11y-friendly dark theme with persistence
+              const root = document.documentElement;
+              const current = localStorage.getItem('theme');
+              if (current) root.dataset.theme = current;
+              
+              document.getElementById('themeToggle').addEventListener('click', () => {
+                const next = root.dataset.theme === 'light' ? '' : 'light';
+                root.dataset.theme = next;
+                localStorage.setItem('theme', next);
+              });</code></pre>
       </div>
     </section>
 
