@@ -155,7 +155,7 @@
     .theme-toggle, .menu-toggle {
       display:grid; place-items:center; width:40px; height:40px; border-radius:10px;
       border: 1px solid color-mix(in oklab, var(--muted) 22%, transparent);
-    
+      background: color-mix(in oklab, var(--panel) 60%, transparent);
       cursor: pointer;
     }
     .menu-toggle { display:none; }
@@ -604,16 +604,16 @@
         <p>Pragmatic snippets you can use today.</p>
       </div>
       <div class="code-card" data-reveal aria-label="Example code">
-              <pre><code>// Toggle a11y-friendly dark theme with persistence
-              const root = document.documentElement;
-              const current = localStorage.getItem('theme');
-              if (current) root.dataset.theme = current;
-              
-              document.getElementById('themeToggle').addEventListener('click', () => {
-                const next = root.dataset.theme === 'light' ? '' : 'light';
-                root.dataset.theme = next;
-                localStorage.setItem('theme', next);
-              });</code></pre>
+<pre><code>// Toggle a11y-friendly dark theme with persistence
+const root = document.documentElement;
+const current = localStorage.getItem('theme');
+if (current) root.dataset.theme = current;
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const next = root.dataset.theme === 'light' ? '' : 'light';
+  root.dataset.theme = next;
+  localStorage.setItem('theme', next);
+});</code></pre>
       </div>
     </section>
 

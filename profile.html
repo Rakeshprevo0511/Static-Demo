@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Teams-Style Side Panel with Org Chart</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f2f1;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Left Navigation Bar */
+        .app-bar {
+            width: 68px;
+            background-color: #464775;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 0;
+            position: relative;
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+
+        .app-bar-item {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 4px 0;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            position: relative;
+            text-decoration: none;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .app-bar-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .app-bar-item.active {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .app-bar-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            background-color: #6264a7;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .app-bar-icon {
+            width: 24px;
+            height: 24px;
+            fill: #fff;
+            flex-shrink: 0;
+        }
+
+        .app-bar-label {
+            font-size: 10px;
+            margin-top: 2px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .app-bar-separator {
+            width: 40px;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 8px 0;
+            flex-shrink: 0;
+        }
+
+        .app-bar-spacer {
+            flex: 1;
+        }
+
+        .badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background-color: #c4314b;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 16px;
+            text-align: center;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            background-color: #fff;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0;
+        }
+
+        .content-section {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.3s;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e1dfdd;
+        }
+
+        .content-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #252423;
+            margin-bottom: 8px;
+        }
+
+        .content-header p {
+            font-size: 14px;
+            color: #605e5c;
+        }
+
+        /* Organization Chart Styles */
+        .org-chart-container {
+            padding: 20px 10px;
+            overflow-x: auto;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            min-height: calc(100vh - 68px);
+        }
+
+        .org-chart {
+            display: inline-block;
+            margin: 0 auto;
+            padding: 20px;
+            min-width: 100%;
+        }
+
+        .org-chart ul {
+            padding-top: 20px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            list-style-type: none;
+            flex-wrap: wrap;
+        }
+
+        .org-chart li {
+            float: left;
+            text-align: center;
+            list-style-type: none;
+            position: relative;
+            padding: 20px 5px 0 5px;
+        }
+
+        .org-chart li::before,
+        .org-chart li::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 50%;
+            border-top: 2px solid #6264a7;
+            width: 50%;
+            height: 20px;
+        }
+
+        .org-chart li::after {
+            right: auto;
+            left: 50%;
+            border-left: 2px solid #6264a7;
+        }
+
+        .org-chart li:only-child::after,
+        .org-chart li:only-child::before {
+            display: none;
+        }
+
+        .org-chart li:only-child {
+            padding-top: 0;
+        }
+
+        .org-chart li:first-child::before,
+        .org-chart li:last-child::after {
+            border: 0 none;
+        }
+
+        .org-chart li:last-child::before {
+            border-right: 2px solid #6264a7;
+            border-radius: 0 5px 0 0;
+        }
+
+        .org-chart li:first-child::after {
+            border-radius: 5px 0 0 0;
+        }
+
+        .org-chart ul ul::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            border-left: 2px solid #6264a7;
+            width: 0;
+            height: 20px;
+        }
+
+        .org-chart .node {
+            border: 2px solid #6264a7;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: #252423;
+            background-color: #fff;
+            font-size: 13px;
+            display: inline-block;
+            border-radius: 8px;
+            transition: all 0.3s;
+            min-width: 150px;
+            max-width: 180px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            word-wrap: break-word;
+        }
+
+        .org-chart .node:hover {
+            background-color: #6264a7;
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(98, 100, 167, 0.3);
+        }
+
+        .org-chart .node .name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .org-chart .node .title {
+            font-size: 11px;
+            color: #605e5c;
+            margin-bottom: 4px;
+        }
+
+        .org-chart .node:hover .title {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .org-chart .node .department {
+            font-size: 10px;
+            color: #8a8886;
+            font-style: italic;
+        }
+
+        .org-chart .node:hover .department {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Activity Feed Styles */
+        .activity-item {
+            background: #fff;
+            border: 1px solid #e1dfdd;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: box-shadow 0.2s;
+        }
+
+        .activity-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .activity-avatar {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            min-height: 32px;
+            border-radius: 50%;
+            background: #6264a7;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .activity-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-user {
+            font-weight: 600;
+            color: #252423;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #8a8886;
+        }
+
+        .activity-message {
+            color: #605e5c;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        /* Chat Styles */
+        .chat-list {
+            background: #fff;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e1dfdd;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .chat-item:hover {
+            background: #f3f2f1;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            min-height: 40px;
+            border-radius: 50%;
+            background: #6264a7;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 12px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            border: 2px solid white;
+        }
+
+        .status-indicator.online {
+            background: #92c353;
+        }
+
+        .status-indicator.busy {
+            background: #c4314b;
+        }
+
+        .chat-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-name {
+            font-weight: 600;
+            color: #252423;
+            margin-bottom: 2px;
+        }
+
+        .chat-preview {
+            font-size: 13px;
+            color: #8a8886;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .chat-meta {
+            text-align: right;
+            flex-shrink: 0;
+            margin-left: 8px;
+        }
+
+        .chat-time {
+            font-size: 12px;
+            color: #8a8886;
+        }
+
+        .unread-badge {
+            background: #c4314b;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 4px;
+            display: inline-block;
+        }
+
+        /* Calendar Styles */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .calendar-btn {
+            padding: 8px 16px;
+            border: 1px solid #8a8886;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .calendar-btn:hover {
+            background: #6264a7;
+            color: white;
+            border-color: #6264a7;
+        }
+
+        .event-item {
+            background: #fff;
+            border-left: 4px solid #6264a7;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 4px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .event-time {
+            font-size: 13px;
+            color: #6264a7;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .event-title {
+            font-weight: 600;
+            color: #252423;
+            margin-bottom: 4px;
+        }
+
+        .event-location {
+            font-size: 13px;
+            color: #8a8886;
+            word-wrap: break-word;
+        }
+
+        /* Files Styles */
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .file-card {
+            background: #fff;
+            border: 1px solid #e1dfdd;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .file-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            background: #6264a7;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .file-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #252423;
+            margin-bottom: 4px;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+
+        .file-meta {
+            font-size: 12px;
+            color: #8a8886;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .app-bar {
+                width: 100%;
+                height: 60px;
+                flex-direction: row;
+                justify-content: space-around;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                padding: 4px 0;
+                overflow-x: auto;
+            }
+
+            .app-bar-item {
+                width: 48px;
+                height: 48px;
+                margin: 0 2px;
+                flex-shrink: 0;
+            }
+
+            .app-bar-label {
+                font-size: 9px;
+            }
+
+            .app-bar-icon {
+                width: 20px;
+                height: 20px;
+            }
+
+            .app-bar-separator {
+                display: none;
+            }
+
+            .app-bar-spacer {
+                display: none;
+            }
+
+            .main-content {
+                margin-bottom: 60px;
+                height: calc(100vh - 60px);
+            }
+
+            .content-section {
+                padding: 15px;
+            }
+
+            .content-header h1 {
+                font-size: 20px;
+            }
+
+            /* Mobile Org Chart */
+            .org-chart-container {
+                padding: 15px 5px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .org-chart {
+                padding: 10px;
+                min-width: 800px;
+            }
+
+            .org-chart .node {
+                min-width: 120px;
+                max-width: 140px;
+                padding: 10px 12px;
+                font-size: 11px;
+            }
+
+            .org-chart .node .name {
+                font-size: 12px;
+            }
+
+            .org-chart .node .title {
+                font-size: 10px;
+            }
+
+            .org-chart .node .department {
+                font-size: 9px;
+            }
+
+            /* Mobile Avatar Fixes */
+            .activity-avatar {
+                width: 36px;
+                height: 36px;
+                min-width: 36px;
+                min-height: 36px;
+                font-size: 14px;
+            }
+
+            .chat-avatar {
+                width: 36px;
+                height: 36px;
+                min-width: 36px;
+                min-height: 36px;
+                font-size: 14px;
+            }
+
+            /* Mobile Chat */
+            .chat-item {
+                padding: 10px 12px;
+            }
+
+            .chat-content {
+                overflow: hidden;
+            }
+
+            .chat-name {
+                font-size: 14px;
+            }
+
+            .chat-preview {
+                font-size: 12px;
+            }
+
+            /* Mobile Calendar */
+            .calendar-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .calendar-header h2 {
+                font-size: 18px;
+            }
+
+            .calendar-nav {
+                justify-content: center;
+            }
+
+            .calendar-btn {
+                flex: 1;
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            /* Mobile Files */
+            .file-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 12px;
+            }
+
+            .file-card {
+                padding: 12px;
+            }
+
+            .file-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .file-icon svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .file-name {
+                font-size: 13px;
+            }
+
+            .file-meta {
+                font-size: 11px;
+            }
+
+            /* Activity Items */
+            .activity-item {
+                padding: 12px;
+            }
+
+            .activity-message {
+                font-size: 14px;
+            }
+
+            /* Event Items */
+            .event-item {
+                padding: 12px;
+            }
+        }
+
+        /* Small Mobile Devices */
+        @media (max-width: 480px) {
+            .content-section {
+                padding: 10px;
+            }
+
+            .content-header h1 {
+                font-size: 18px;
+            }
+
+            .content-header p {
+                font-size: 13px;
+            }
+
+            .app-bar-label {
+                font-size: 8px;
+            }
+
+            .badge {
+                padding: 1px 4px;
+                font-size: 9px;
+                min-width: 14px;
+            }
+
+            .file-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 10px;
+            }
+
+            .chat-meta {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+            }
+
+            .unread-badge {
+                margin-top: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Side Panel (App Bar) -->
+        <nav class="app-bar">
+            <!-- Activity -->
+            <a href="#" class="app-bar-item" data-tab="activity">
+                <svg class="app-bar-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                </svg>
+                <span class="app-bar-label">Activity</span>
+                <span class="badge">3</span>
+            </a>
+
+            <!-- Chat -->
+            <a href="#" class="app-bar-item" data-tab="chat">
+                <svg class="app-bar-icon" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+                </svg>
+                <span class="app-bar-label">Chat</span>
+                <span class="badge">5</span>
+            </a>
+
+            <!-- Teams -->
+            <a href="#" class="app-bar-item active" data-tab="teams">
+                <svg class="app-bar-icon" viewBox="0 0 24 24">
+                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                </svg>
+                <span class="app-bar-label">Teams</span>
+            </a>
+
+            <!-- Calendar -->
+            <a href="#" class="app-bar-item" data-tab="calendar">
+                <svg class="app-bar-icon" viewBox="0 0 24 24">
+                    <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/>
+                </svg>
+                <span class="app-bar-label">Calendar</span>
+            </a>
+
+            <!-- Calls -->
+            <a href="#" class="app-bar-item" data-tab="calls">
+                <svg class="app-bar-icon" viewBox="0 0 24 24">
+                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+                <span class="app-bar-label">Calls</span>
+            </a>
+
+            <!-- Files -->
+            <a href="#" class="app-bar-item" data-tab="files">
+                <svg class="app-bar-icon" viewBox="0 0 24 24">
+                    <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/>
+                </svg>
+                <span class="app-bar-label">Files</span>
+            </a>
+
+            <div class="app-bar-separator"></div>
+
+            <!-- More Apps (Three dots) -->
+            <a href="#" class="app-bar-item" data-tab="more">
+                <svg class="app-bar-icon" viewBox="0 0 24 24">
+                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                </svg>
+                <span class="app-bar-label">More</span>
+            </a>
+
+            <div class="app-bar-spacer"></div>
+
+            <!-- Apps (at bottom) -->
+            <a href="#" class="app-bar-item" data-tab="apps">
+                <svg class="app-bar-icon" viewBox="0 0 24 24">
+                    <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/>
+                </svg>
+                <span class="app-bar-label">Apps</span>
+            </a>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Activity Tab Content -->
+            <section id="activity" class="content-section">
+                <div class="content-header">
+                    <h1>Activity</h1>
+                    <p>Stay updated with your recent notifications and mentions</p>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-avatar">SA</div>
+                        <div class="activity-info">
+                            <div class="activity-user">Sarah Anderson</div>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-message">
+                        Mentioned you in <strong>Q4 Planning Discussion</strong>: "Can you review the budget proposal?"
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-avatar">MK</div>
+                        <div class="activity-info">
+                            <div class="activity-user">Michael Kumar</div>
+                            <div class="activity-time">5 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-message">
+                        Replied to your message in <strong>Development Team</strong>: "The API integration is complete!"
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-avatar">RP</div>
+                        <div class="activity-info">
+                            <div class="activity-user">Rachel Park</div>
+                            <div class="activity-time">Yesterday at 4:30 PM</div>
+                        </div>
+                    </div>
+                    <div class="activity-message">
+                        Shared a file in <strong>Marketing Campaign</strong>: "Brand Guidelines 2025.pdf"
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chat Tab Content -->
+            <section id="chat" class="content-section">
+                <div class="content-header">
+                    <h1>Chat</h1>
+                    <p>Your recent conversations</p>
+                </div>
+                <div class="chat-list">
+                    <div class="chat-item">
+                        <div class="chat-avatar">
+                            JD
+                            <div class="status-indicator online"></div>
+                        </div>
+                        <div class="chat-content">
+                            <div class="chat-name">John Doe</div>
+                            <div class="chat-preview">Hey, did you get a chance to review the document?</div>
+                        </div>
+                        <div class="chat-meta">
+                            <div class="chat-time">10:30 AM</div>
+                            <span class="unread-badge">2</span>
+                        </div>
+                    </div>
+                    <div class="chat-item">
+                        <div class="chat-avatar">
+                            ES
+                            <div class="status-indicator busy"></div>
+                        </div>
+                        <div class="chat-content">
+                            <div class="chat-name">Emily Smith</div>
+                            <div class="chat-preview">Meeting scheduled for tomorrow at 2 PM</div>
+                        </div>
+                        <div class="chat-meta">
+                            <div class="chat-time">9:15 AM</div>
+                            <span class="unread-badge">1</span>
+                        </div>
+                    </div>
+                    <div class="chat-item">
+                        <div class="chat-avatar">
+                            DT
+                            <div class="status-indicator online"></div>
+                        </div>
+                        <div class="chat-content">
+                            <div class="chat-name">Development Team</div>
+                            <div class="chat-preview">Alex: The new feature is ready for testing</div>
+                        </div>
+                        <div class="chat-meta">
+                            <div class="chat-time">Yesterday</div>
+                            <span class="unread-badge">3</span>
+                        </div>
+                    </div>
+                    <div class="chat-item">
+                        <div class="chat-avatar">
+                            LP
+                            <div class="status-indicator online"></div>
+                        </div>
+                        <div class="chat-content">
+                            <div class="chat-name">Lisa Peterson</div>
+                            <div class="chat-preview">Thanks for your help with the presentation!</div>
+                        </div>
+                        <div class="chat-meta">
+                            <div class="chat-time">Yesterday</div>
+                        </div>
+                    </div>
+                    <div class="chat-item">
+                        <div class="chat-avatar">
+                            MG
+                            <div class="status-indicator online"></div>
+                        </div>
+                        <div class="chat-content">
+                            <div class="chat-name">Marketing Group</div>
+                            <div class="chat-preview">Sarah: Campaign results look promising</div>
+                        </div>
+                        <div class="chat-meta">
+                            <div class="chat-time">Friday</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Teams Tab Content with Org Chart -->
+            <section id="teams" class="content-section active">
+                <div class="org-chart-container">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h1 style="font-size: 28px; color: #252423; margin-bottom: 10px;">Organization Structure</h1>
+                        <p style="color: #605e5c; font-size: 14px;">Company Hierarchy and Team Members</p>
+                    </div>
+                    <div class="org-chart">
+                        <ul>
+                            <li>
+                                <div class="node">
+                                    <div class="name">Robert Johnson</div>
+                                    <div class="title">Chief Executive Officer</div>
+                                    <div class="department">Executive</div>
+                                </div>
+                                <ul>
+                                    <li>
+                                        <div class="node">
+                                            <div class="name">Sarah Mitchell</div>
+                                            <div class="title">Chief Technology Officer</div>
+                                            <div class="department">Technology</div>
+                                        </div>
+                                        <ul>
+                                            <li>
+                                                <div class="node">
+                                                    <div class="name">Michael Chen</div>
+                                                    <div class="title">Engineering Manager</div>
+                                                    <div class="department">Development</div>
+                                                </div>
+                                                <ul>
+                                                    <li>
+                                                        <div class="node">
+                                                            <div class="name">Alex Kumar</div>
+                                                            <div class="title">Senior Developer</div>
+                                                            <div class="department">Frontend Team</div>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="node">
+                                                            <div class="name">Emma Wilson</div>
+                                                            <div class="title">Senior Developer</div>
+                                                            <div class="department">Backend Team</div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                <div class="node">
+                                                    <div class="name">David Park</div>
+                                                    <div class="title">QA Manager</div>
+                                                    <div class="department">Quality Assurance</div>
+                                                </div>
+                                                <ul>
+                                                    <li>
+                                                        <div class="node">
+                                                            <div class="name">Lisa Anderson</div>
+                                                            <div class="title">QA Engineer</div>
+                                                            <div class="department">Testing</div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <div class="node">
+                                            <div class="name">Jennifer Davis</div>
+                                            <div class="title">Chief Operating Officer</div>
+                                            <div class="department">Operations</div>
+                                        </div>
+                                        <ul>
+                                            <li>
+                                                <div class="node">
+                                                    <div class="name">Tom Richards</div>
+                                                    <div class="title">Operations Manager</div>
+                                                    <div class="department">Operations</div>
+                                                </div>
+                                                <ul>
+                                                    <li>
+                                                        <div class="node">
+                                                            <div class="name">Rachel Green</div>
+                                                            <div class="title">Operations Specialist</div>
+                                                            <div class="department">Operations</div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <div class="node">
+                                            <div class="name">Mark Thompson</div>
+                                            <div class="title">Chief Marketing Officer</div>
+                                            <div class="department">Marketing</div>
+                                        </div>
+                                        <ul>
+                                            <li>
+                                                <div class="node">
+                                                    <div class="name">Jessica Brown</div>
+                                                    <div class="title">Marketing Manager</div>
+                                                    <div class="department">Marketing</div>
+                                                </div>
+                                                <ul>
+                                                    <li>
+                                                        <div class="node">
+                                                            <div class="name">Kevin Lee</div>
+                                                            <div class="title">Content Specialist</div>
+                                                            <div class="department">Content Team</div>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="node">
+                                                            <div class="name">Maria Garcia</div>
+                                                            <div class="title">Social Media Manager</div>
+                                                            <div class="department">Digital Marketing</div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Calendar Tab Content -->
+            <section id="calendar" class="content-section">
+                <div class="content-header">
+                    <h1>Calendar</h1>
+                    <p>Your upcoming meetings and events</p>
+                </div>
+                <div class="calendar-header">
+                    <h2 style="color: #252423;">Today, November 10, 2025</h2>
+                    <div class="calendar-nav">
+                        <button class="calendar-btn">Previous</button>
+                        <button class="calendar-btn">Today</button>
+                        <button class="calendar-btn">Next</button>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-time">9:00 AM - 10:00 AM</div>
+                    <div class="event-title">Team Standup Meeting</div>
+                    <div class="event-location">Conference Room A / Teams Meeting</div>
+                </div>
+                <div class="event-item" style="border-left-color: #c4314b;">
+                    <div class="event-time" style="color: #c4314b;">11:30 AM - 12:30 PM</div>
+                    <div class="event-title">Client Presentation</div>
+                    <div class="event-location">Virtual - Teams Link</div>
+                </div>
+                <div class="event-item" style="border-left-color: #92c353;">
+                    <div class="event-time" style="color: #92c353;">2:00 PM - 3:00 PM</div>
+                    <div class="event-title">Sprint Planning Session</div>
+                    <div class="event-location">Conference Room B</div>
+                </div>
+                <div class="event-item" style="border-left-color: #ffaa44;">
+                    <div class="event-time" style="color: #ffaa44;">4:00 PM - 4:30 PM</div>
+                    <div class="event-title">One-on-One with Manager</div>
+                    <div class="event-location">Manager's Office</div>
+                </div>
+            </section>
+
+            <!-- Calls Tab Content -->
+            <section id="calls" class="content-section">
+                <div class="content-header">
+                    <h1>Calls</h1>
+                    <p>Recent calls and voicemails</p>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-avatar" style="background: #92c353;">JD</div>
+                        <div class="activity-info">
+                            <div class="activity-user">John Doe</div>
+                            <div class="activity-time">Today, 10:45 AM • Duration: 15:23</div>
+                        </div>
+                    </div>
+                    <div class="activity-message" style="color: #92c353; font-weight: 600;">
+                        ↓ Incoming Call - Answered
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-avatar" style="background: #6264a7;">ES</div>
+                        <div class="activity-info">
+                            <div class="activity-user">Emily Smith</div>
+                            <div class="activity-time">Yesterday, 3:20 PM • Duration: 8:45</div>
+                        </div>
+                    </div>
+                    <div class="activity-message" style="color: #6264a7; font-weight: 600;">
+                        ↑ Outgoing Call
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-avatar" style="background: #c4314b;">MC</div>
+                        <div class="activity-info">
+                            <div class="activity-user">Michael Chen</div>
+                            <div class="activity-time">Yesterday, 11:00 AM</div>
+                        </div>
+                    </div>
+                    <div class="activity-message" style="color: #c4314b; font-weight: 600;">
+                        ↓ Missed Call
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-avatar" style="background: #6264a7;">DT</div>
+                        <div class="activity-info">
+                            <div class="activity-user">Development Team</div>
+                            <div class="activity-time">Nov 8, 2:00 PM • Duration: 45:12</div>
+                        </div>
+                    </div>
+                    <div class="activity-message" style="color: #6264a7; font-weight: 600;">
+                        📹 Team Video Call
+                    </div>
+                </div>
+            </section>
+
+            <!-- Files Tab Content -->
+            <section id="files" class="content-section">
+                <div class="content-header">
+                    <h1>Files</h1>
+                    <p>Your recent and shared files</p>
+                </div>
+                <div class="file-grid">
+                    <div class="file-card">
+                        <div class="file-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">Project Proposal.docx</div>
+                        <div class="file-meta">Modified today • 2.4 MB</div>
+                    </div>
+                    <div class="file-card">
+                        <div class="file-icon" style="background: #c4314b;">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">Budget 2025.xlsx</div>
+                        <div class="file-meta">Modified yesterday • 1.8 MB</div>
+                    </div>
+                    <div class="file-card">
+                        <div class="file-icon" style="background: #ffaa44;">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">Presentation Q4.pptx</div>
+                        <div class="file-meta">Modified Nov 8 • 5.2 MB</div>
+                    </div>
+                    <div class="file-card">
+                        <div class="file-icon" style="background: #92c353;">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">Meeting Notes.pdf</div>
+                        <div class="file-meta">Modified Nov 7 • 856 KB</div>
+                    </div>
+                    <div class="file-card">
+                        <div class="file-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">Team Photo.jpg</div>
+                        <div class="file-meta">Modified Nov 5 • 3.1 MB</div>
+                    </div>
+                    <div class="file-card">
+                        <div class="file-icon" style="background: #8a8886;">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">Archives</div>
+                        <div class="file-meta">Folder • 24 items</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- More Tab Content -->
+            <section id="more" class="content-section">
+                <div class="content-header">
+                    <h1>More Apps</h1>
+                    <p>Discover and manage your apps</p>
+                </div>
+                <div class="file-grid">
+                    <div class="file-card">
+                        <div class="file-icon" style="background: #6264a7;">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">Analytics</div>
+                        <div class="file-meta">Business Intelligence</div>
+                    </div>
+                    <div class="file-card">
+                        <div class="file-icon" style="background: #92c353;">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">Planner</div>
+                        <div class="file-meta">Task Management</div>
+                    </div>
+                    <div class="file-card">
+                        <div class="file-icon" style="background: #ffaa44;">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">Outlook</div>
+                        <div class="file-meta">Email & Calendar</div>
+                    </div>
+                    <div class="file-card">
+                        <div class="file-icon" style="background: #c4314b;">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">Tasks</div>
+                        <div class="file-meta">To-Do Lists</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Apps Tab Content -->
+            <section id="apps" class="content-section">
+                <div class="content-header">
+                    <h1>Apps</h1>
+                    <p>Browse and install apps for Teams</p>
+                </div>
+                <div class="file-grid">
+                    <div class="file-card">
+                        <div class="file-icon" style="background: #6264a7;">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">All Apps</div>
+                        <div class="file-meta">Browse catalog</div>
+                    </div>
+                    <div class="file-card">
+                        <div class="file-icon" style="background: #0078d4;">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">Forms</div>
+                        <div class="file-meta">Create surveys</div>
+                    </div>
+                    <div class="file-card">
+                        <div class="file-icon" style="background: #7719aa;">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">OneNote</div>
+                        <div class="file-meta">Digital notebook</div>
+                    </div>
+                    <div class="file-card">
+                        <div class="file-icon" style="background: #106ebe;">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">Word</div>
+                        <div class="file-meta">Document editing</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.app-bar-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const tabName = this.getAttribute('data-tab');
+                
+                if (!tabName) return
+                document.querySelectorAll('.app-bar-item').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                this.classList.add('active');
+                
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                const activeSection = document.getElementById(tabName);
+                if (activeSection) {
+                    activeSection.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

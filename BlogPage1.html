@@ -1,0 +1,3914 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      TanAdvisor - Compare Colleges, Courses & Exams | Education Platform
+    </title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+    <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  overflow-x: hidden;
+}
+
+/* Header Styles */
+.header {
+  background-color: #0d7377;
+  padding: 15px 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.header.scrolled {
+  padding: 10px 50px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 32px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: transform 0.3s;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.logo-icon {
+  width: 45px;
+  height: 45px;
+  margin-right: 12px;
+  background: linear-gradient(135deg, #14cbb9, #0d7377);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.search-container {
+  flex: 1;
+  max-width: 650px;
+  margin: 0 40px;
+  display: flex;
+  position: relative;
+}
+
+.search-input {
+  flex: 1;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 6px 0 0 6px;
+  font-size: 14px;
+  outline: none;
+  transition: box-shadow 0.3s;
+  cursor: pointer;
+}
+
+.search-input:focus {
+  box-shadow: 0 0 0 3px rgba(20, 203, 185, 0.3);
+}
+
+.search-button {
+  background-color: #f57c00;
+  color: white;
+  border: none;
+  padding: 14px 35px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 0 6px 6px 0;
+  transition: all 0.3s;
+}
+
+.search-button:hover {
+  background-color: #e65100;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 124, 0, 0.4);
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.auth-buttons a {
+  color: white;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+
+.auth-buttons a:first-child:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.auth-buttons a:last-child {
+  background-color: #f57c00;
+}
+
+.auth-buttons a:last-child:hover {
+  background-color: #e65100;
+  transform: translateY(-2px);
+}
+
+.mobile-menu-toggle {
+  display: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 10px;
+}
+
+/* Search Overlay/Modal */
+.search-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.search-overlay.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.search-modal {
+  background-color: white;
+  width: 100%;
+  max-height: 101vh;
+  overflow-y: auto;
+  animation: slideDown 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.search-modal-header {
+  padding: 20px 50px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.search-modal-input {
+  flex: 1;
+  padding: 15px 20px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-modal-input:focus {
+  border-color: #0d7377;
+}
+
+.search-modal-button {
+  background-color: #f57c00;
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.search-modal-button:hover {
+  background-color: #e65100;
+}
+
+.close-search {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #666;
+  padding: 5px 10px;
+  transition: color 0.3s;
+}
+
+.close-search:hover {
+  color: #333;
+}
+
+.search-modal-content {
+  padding: 30px 50px;
+}
+
+.search-section {
+  margin-bottom: 40px;
+}
+
+.search-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.search-section-header i {
+  color: #0d7377;
+}
+
+.clear-all {
+  margin-left: auto;
+  color: #0d7377;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.clear-all:hover {
+  color: #14cbb9;
+}
+
+.search-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.search-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.search-item:hover {
+  background-color: #f8f9fa;
+  padding-left: 25px;
+}
+
+.search-item-text {
+  flex: 1;
+  font-size: 15px;
+  color: #333;
+}
+
+.search-item-tag {
+  padding: 4px 12px;
+  background-color: #e8f4f5;
+  color: #0d7377;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Chatbot Styles */
+.chatbot-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 9998;
+}
+
+.chatbot-button {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #0d7377, #14cbb9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(13, 115, 119, 0.4);
+  transition: all 0.3s;
+  border: none;
+}
+
+.chatbot-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(13, 115, 119, 0.6);
+}
+
+.chatbot-button.active {
+  background: linear-gradient(135deg, #f57c00, #e65100);
+}
+
+.chatbot-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 22px;
+  height: 22px;
+  background-color: #ff4444;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  animation: pulseBadge 2s infinite;
+}
+
+@keyframes pulseBadge {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.chatbot-window {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  width: 380px;
+  height: 550px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 40px rgba(0, 0, 0, 0.2);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+.chatbot-window.active {
+  display: flex;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chatbot-header {
+  background: linear-gradient(135deg, #0d7377, #14cbb9);
+  color: white;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chatbot-avatar {
+  width: 45px;
+  height: 45px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0d7377;
+  font-size: 24px;
+}
+
+.chatbot-info {
+  flex: 1;
+}
+
+.chatbot-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.chatbot-status {
+  font-size: 12px;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #4caf50;
+  border-radius: 50%;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.chatbot-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.3s;
+}
+
+.chatbot-close:hover {
+  transform: rotate(90deg);
+}
+
+.chatbot-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+}
+
+.chatbot-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chatbot-messages::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}
+
+.message {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  animation: messageSlide 0.3s ease;
+}
+
+@keyframes messageSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message.bot {
+  align-items: flex-start;
+}
+
+.message.user {
+  align-items: flex-end;
+}
+
+.message-bubble {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.message.bot .message-bubble {
+  background-color: white;
+  color: #333;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.message.user .message-bubble {
+  background: linear-gradient(135deg, #0d7377, #14cbb9);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.message-time {
+  font-size: 11px;
+  color: #999;
+  margin-top: 5px;
+}
+
+.quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.quick-reply-btn {
+  background-color: white;
+  border: 1px solid #0d7377;
+  color: #0d7377;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.quick-reply-btn:hover {
+  background-color: #0d7377;
+  color: white;
+}
+
+.typing-indicator {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: white;
+  border-radius: 18px;
+  border-bottom-left-radius: 4px;
+  max-width: 75%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.typing-indicator.active {
+  display: flex;
+}
+
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #0d7377;
+  border-radius: 50%;
+  animation: typingDot 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingDot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.chatbot-input-area {
+  padding: 15px;
+  background-color: white;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  gap: 10px;
+}
+
+.chatbot-input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.chatbot-input:focus {
+  border-color: #0d7377;
+}
+
+.chatbot-send-btn {
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, #0d7377, #14cbb9);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chatbot-send-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(13, 115, 119, 0.4);
+}
+
+.chatbot-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Navigation Menu */
+.nav-menu {
+  background-color: #0a5f63;
+  padding: 12px 50px;
+  display: flex;
+  gap: 35px;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.nav-menu::-webkit-scrollbar {
+  height: 4px;
+}
+
+.nav-menu::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.nav-menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 0;
+  white-space: nowrap;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.nav-menu a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #14cbb9;
+  transition: width 0.3s;
+}
+
+.nav-menu a:hover::after {
+  width: 100%;
+}
+
+.nav-menu a:hover {
+  color: #14cbb9;
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(
+      135deg,
+      rgba(13, 115, 119, 0.95),
+      rgba(10, 95, 99, 0.9)
+    ),
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="1200" height="600" fill="%230d7377"/><rect width="1200" height="600" fill="url(%23grid)"/></svg>');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 550px;
+  display: flex;
+  align-items: center;
+  padding: 60px 50px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(
+    circle,
+    rgba(20, 203, 185, 0.15),
+    transparent
+  );
+  border-radius: 50%;
+  animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-30px) translateX(30px);
+  }
+}
+
+.hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 80px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.comparison-visual {
+  flex-shrink: 0;
+  animation: slideInLeft 0.8s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.scale-illustration {
+  position: relative;
+  width: 320px;
+  height: 280px;
+}
+
+.building {
+  width: 110px;
+  height: 130px;
+  border-radius: 12px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s;
+}
+
+.building:hover {
+  transform: translateY(-10px) !important;
+}
+
+.building-1 {
+  bottom: 20px;
+  left: 0;
+  background: linear-gradient(135deg, #0d7377, #0a5f63);
+  transform: rotate(-5deg);
+}
+
+.building-2 {
+  bottom: 20px;
+  right: 0;
+  background: linear-gradient(135deg, #f57c00, #e65100);
+  transform: rotate(5deg);
+}
+
+.building-icon {
+  font-size: 45px;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.building-dots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 2px;
+}
+
+.scale-pole {
+  position: absolute;
+  width: 10px;
+  height: 200px;
+  background: linear-gradient(180deg, #555, #333);
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  border-radius: 5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.scale-top {
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  background: linear-gradient(135deg, #666, #444);
+  border-radius: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -18px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.scale-arm {
+  position: absolute;
+  width: 300px;
+  height: 8px;
+  background: linear-gradient(90deg, #555, #333, #555);
+  left: 50%;
+  transform: translateX(-50%);
+  top: 60px;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.hero-text {
+  flex: 1;
+  color: white;
+  animation: slideInRight 0.8s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.hero-text h1 {
+  font-size: 52px;
+  line-height: 1.2;
+  margin-bottom: 25px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.hero-text .highlight {
+  color: #14cbb9;
+  position: relative;
+  display: inline-block;
+}
+
+.hero-text .highlight::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #14cbb9;
+}
+
+.hero-text h2 {
+  font-size: 26px;
+  font-weight: 400;
+  margin-bottom: 35px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.hero-text .subtext {
+  color: #ffd54f;
+  font-weight: 600;
+}
+
+.cta-button {
+  background: linear-gradient(135deg, #f57c00, #e65100);
+  color: white;
+  border: none;
+  padding: 18px 45px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 50px;
+  transition: all 0.3s;
+  display: inline-block;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(245, 124, 0, 0.4);
+}
+
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(245, 124, 0, 0.6);
+}
+
+.cta-button:active {
+  transform: translateY(-1px);
+}
+
+/* Compare Section */
+.compare-section {
+  background-color: #f8f9fa;
+  padding: 50px 50px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.compare-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.compare-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #0d7377;
+}
+
+.compare-header h3 {
+  font-size: 26px;
+  color: #0d7377;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.compare-header h3 i {
+  font-size: 28px;
+}
+
+.compare-header a {
+  color: #0d7377;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.compare-header a:hover {
+  color: #14cbb9;
+  gap: 10px;
+}
+
+.preferences-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.preference-item {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+  border-left: 4px solid #0d7377;
+}
+
+.preference-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.preference-item h4 {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preference-item h4 i {
+  color: #0d7377;
+}
+
+.preference-item p {
+  font-size: 17px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Features Section */
+.features-section {
+  padding: 70px 50px;
+  background: linear-gradient(135deg, #ffffff, #f0f4f8);
+}
+
+.features-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 38px;
+  color: #0d7377;
+  margin-bottom: 50px;
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(90deg, #0d7377, #14cbb9);
+  border-radius: 2px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.feature-card {
+  background: white;
+  padding: 35px 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #0d7377, #14cbb9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 35px;
+  color: white;
+  box-shadow: 0 4px 15px rgba(13, 115, 119, 0.3);
+}
+
+.feature-card h3 {
+  font-size: 22px;
+  color: #0d7377;
+  margin-bottom: 15px;
+}
+
+.feature-card p {
+  color: #666;
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+/* Statistics Section */
+.stats-section {
+  background: linear-gradient(135deg, #0d7377, #0a5f63);
+  padding: 60px 50px;
+  color: white;
+}
+
+.stats-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+  text-align: center;
+}
+
+.stat-item {
+  padding: 20px;
+}
+
+.stat-number {
+  font-size: 48px;
+  font-weight: bold;
+  color: #14cbb9;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.stat-label {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* Recommended Exam News Section */
+.exam-news-section {
+  max-width: 1400px;
+  margin: 50px auto;
+  padding: 0 20px;
+}
+
+.section-header {
+  margin-bottom: 24px;
+}
+
+.exam-news-section .section-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.exam-news-section .section-title::after {
+  display: none;
+}
+
+.news-tabs {
+  display: flex;
+  gap: 12px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.news-tab {
+  padding: 10px 24px;
+  border: 1px solid #d1d5db;
+  background-color: white;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.3s;
+  border-bottom: none;
+  margin-bottom: -2px;
+}
+
+.news-tab:hover {
+  color: #0d7377;
+  border-color: #0d7377;
+}
+
+.news-tab.active {
+  background-color: #0d7377;
+  color: white;
+  border-color: #0d7377;
+}
+
+/* Main Content Wrapper - 2/3 and 1/3 Layout */
+.news-content-wrapper {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+/* News Main Section (Left Side - 2/3) */
+.news-main-section {
+  width: 100%;
+}
+
+.news-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.news-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  transition: all 0.3s;
+  cursor: pointer;
+  border: 1px solid #f3f4f6;
+}
+
+.news-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.news-image {
+  width: 180px;
+  height: 140px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.news-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.news-card:hover .news-image img {
+  transform: scale(1.08);
+}
+
+.news-content {
+  flex: 1;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.news-badge {
+  display: inline-flex;
+  align-items: center;
+  background-color: #ef4444;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  width: fit-content;
+}
+
+.news-badge.live::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background-color: white;
+  border-radius: 50%;
+  margin-right: 6px;
+  animation: pulseLive 2s infinite;
+}
+
+@keyframes pulseLive {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.news-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.news-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 13px;
+  color: #6b7280;
+  flex-wrap: wrap;
+}
+
+.news-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.news-meta-item i {
+  font-size: 12px;
+}
+
+.news-views {
+  margin-left: auto;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.view-all-btn {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.view-all-btn button {
+  padding: 12px 32px;
+  background-color: white;
+  border: 2px solid #0d7377;
+  color: #0d7377;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.view-all-btn button:hover {
+  background-color: #0d7377;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 115, 119, 0.3);
+}
+
+.view-all-btn button i {
+  transition: transform 0.3s;
+}
+
+.view-all-btn button:hover i {
+  transform: translateX(4px);
+}
+
+/* Sidebar Section (Right Side - 1/3) */
+.news-sidebar {
+  position: relative;
+}
+
+.sidebar-ad-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 20px;
+}
+
+.ad-label {
+  font-size: 12px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-bottom: -10px;
+}
+
+.ad-box {
+  background: #ffffff;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.ad-box:hover {
+  border-color: #0d7377;
+  box-shadow: 0 2px 8px rgba(13, 115, 119, 0.1);
+}
+
+.ad-placeholder {
+  text-align: center;
+  color: #9ca3af;
+  padding: 20px;
+}
+
+.ad-placeholder i {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.4;
+  color: #6b7280;
+}
+
+.ad-placeholder p {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  color: #6b7280;
+}
+
+.sticky-label {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #0d7377;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Sticky Ad Specific Styling */
+.ad-box.sticky-ad {
+  border-color: #0d7377;
+  background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);
+}
+
+/* CTA Section */
+.cta-section {
+  background: linear-gradient(135deg, #f57c00, #e65100);
+  padding: 60px 50px;
+  text-align: center;
+  color: white;
+}
+
+.cta-section h2 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.cta-section p {
+  font-size: 18px;
+  margin-bottom: 30px;
+  opacity: 0.95;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 15px 40px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.3s;
+  display: inline-block;
+}
+
+.btn-primary {
+  background-color: white;
+  color: #f57c00;
+}
+
+.btn-primary:hover {
+  background-color: #0d7377;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-secondary:hover {
+  background-color: white;
+  color: #f57c00;
+  transform: translateY(-3px);
+}
+
+/* Footer */
+.footer {
+  background-color: #1a1a1a;
+  color: #ccc;
+  padding: 50px 50px 20px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-column h4 {
+  color: white;
+  font-size: 18px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.footer-column ul {
+  list-style: none;
+}
+
+.footer-column ul li {
+  margin-bottom: 12px;
+}
+
+.footer-column ul li a {
+  color: #ccc;
+  text-decoration: none;
+  transition: all 0.3s;
+  display: inline-block;
+}
+
+.footer-column ul li a:hover {
+  color: #14cbb9;
+  padding-left: 5px;
+}
+
+.social-links {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.social-links a {
+  width: 40px;
+  height: 40px;
+  background-color: #333;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.social-links a:hover {
+  background-color: #0d7377;
+  transform: translateY(-3px);
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 30px;
+  border-top: 1px solid #333;
+  color: #999;
+}
+
+/* Scroll to Top Button */
+.scroll-top {
+  position: fixed;
+  bottom: 110px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #0d7377, #14cbb9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s;
+  z-index: 999;
+}
+
+.scroll-top:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.scroll-top.show {
+  display: flex;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .exam-news-section {
+    max-width: 1200px;
+  }
+  
+  .news-content-wrapper {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 50px;
+  }
+
+  .hero-text h1 {
+    font-size: 42px;
+  }
+
+  .hero-text h2 {
+    font-size: 22px;
+  }
+  
+  .news-content-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .news-sidebar {
+    display: none;
+  }
+
+  .exam-news-section {
+    max-width: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 15px 20px;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    font-size: 26px;
+  }
+
+  .logo-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+
+  .search-container {
+    order: 3;
+    width: 100%;
+    margin: 15px 0 0 0;
+    max-width: 100%;
+  }
+
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .auth-buttons {
+    gap: 10px;
+  }
+
+  .auth-buttons a {
+    font-size: 13px;
+    padding: 6px 15px;
+  }
+
+  .nav-menu {
+    padding: 10px 20px;
+    gap: 20px;
+  }
+
+  .nav-menu a {
+    font-size: 13px;
+  }
+
+  .hero-section {
+    padding: 40px 20px;
+    min-height: auto;
+  }
+
+  .hero-text h1 {
+    font-size: 32px;
+  }
+
+  .hero-text h2 {
+    font-size: 18px;
+  }
+
+  .cta-button {
+    padding: 15px 35px;
+    font-size: 18px;
+  }
+
+  .scale-illustration {
+    width: 280px;
+    height: 240px;
+    transform: scale(0.9);
+  }
+
+  .compare-section {
+    padding: 40px 20px;
+  }
+
+  .features-section {
+    padding: 50px 20px;
+  }
+
+  .section-title {
+    font-size: 30px;
+  }
+
+  .stats-section {
+    padding: 40px 20px;
+  }
+
+  .stat-number {
+    font-size: 36px;
+  }
+
+  .cta-section {
+    padding: 40px 20px;
+  }
+
+  .cta-section h2 {
+    font-size: 28px;
+  }
+
+  .footer {
+    padding: 40px 20px 20px;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .search-modal-header {
+    padding: 20px;
+  }
+
+  .search-modal-content {
+    padding: 20px;
+  }
+
+  .chatbot-container {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .chatbot-window {
+    width: 100vw;
+    height: 100vh;
+    bottom: 0;
+    right: -20px;
+    border-radius: 0;
+  }
+
+  .scroll-top {
+    bottom: 100px;
+    right: 20px;
+  }
+  
+  .exam-news-section {
+    padding: 0 16px;
+    margin: 30px auto;
+  }
+
+  .exam-news-section .section-title {
+    font-size: 20px;
+  }
+
+  .news-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .news-tab {
+    padding: 8px 16px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .news-card {
+    flex-direction: column;
+  }
+
+  .news-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .news-content {
+    padding: 16px;
+  }
+
+  .news-title {
+    font-size: 15px;
+  }
+
+  .news-meta {
+    gap: 12px;
+  }
+
+  .news-views {
+    margin-left: 0;
+  }
+
+  .view-all-btn button {
+    padding: 10px 24px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-text h1 {
+    font-size: 26px;
+  }
+
+  .hero-text h2 {
+    font-size: 16px;
+  }
+
+  .preferences-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+
+  .search-modal-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .search-modal-button {
+    width: 100%;
+  }
+  
+  .section-header {
+    margin-bottom: 16px;
+  }
+
+  .exam-news-section .section-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .news-grid {
+    margin-top: 16px;
+    gap: 16px;
+  }
+
+  .news-image {
+    height: 180px;
+  }
+
+  .news-meta {
+    font-size: 12px;
+  }
+}
+
+/* Loading Animation */
+body {
+  animation: fadeInBody 0.5s ease-in;
+}
+
+@keyframes fadeInBody {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+</style>
+<style>
+
+/* Calendar Wrapper */
+.calendar-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Calendar Header */
+.calendar-header {
+  background: linear-gradient(135deg, #0d7377, #14cbb9);
+  padding: 25px 30px;
+  color: white;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-left i {
+  font-size: 32px;
+}
+
+.header-left h1 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.btn-add-event {
+  background: white;
+  color: #0d7377;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.btn-add-event:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Calendar Container */
+.calendar-container {
+  padding: 30px;
+}
+
+/* FullCalendar Custom Styling */
+#calendar {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Calendar Header Toolbar */
+.fc .fc-toolbar {
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d7377;
+}
+
+/* Calendar Buttons */
+.fc .fc-button {
+  background-color: #0d7377;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-transform: capitalize;
+  transition: all 0.3s;
+}
+
+.fc .fc-button:hover {
+  background-color: #14cbb9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 115, 119, 0.3);
+}
+
+.fc .fc-button:focus {
+  box-shadow: 0 0 0 3px rgba(13, 115, 119, 0.25);
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  background-color: #14cbb9;
+}
+
+/* Today Button */
+.fc .fc-today-button {
+  background-color: #f57c00;
+}
+
+.fc .fc-today-button:hover {
+  background-color: #e65100;
+}
+
+/* Calendar Grid */
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border-color: #e5e7eb;
+}
+
+.fc-theme-standard .fc-scrollgrid {
+  border-color: #e5e7eb;
+}
+
+/* Day Headers */
+.fc .fc-col-header-cell {
+  background: linear-gradient(135deg, #0d7377, #14cbb9);
+  color: white;
+  padding: 15px 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+/* Day Cells */
+.fc .fc-daygrid-day {
+  transition: background-color 0.3s;
+}
+
+.fc .fc-daygrid-day:hover {
+  background-color: #f0fdfa;
+}
+
+.fc .fc-daygrid-day-number {
+  padding: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Today's Date */
+.fc .fc-day-today {
+  background-color: rgba(13, 115, 119, 0.08) !important;
+}
+
+.fc .fc-day-today .fc-daygrid-day-number {
+  background: linear-gradient(135deg, #0d7377, #14cbb9);
+  color: white;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+/* Events */
+.fc .fc-event {
+  border-radius: 6px;
+  padding: 4px 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin: 2px 0;
+}
+
+.fc .fc-event:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.fc .fc-event-title {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.fc .fc-event-time {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+/* More Events Link */
+.fc .fc-daygrid-more-link {
+  color: #0d7377;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.fc .fc-daygrid-more-link:hover {
+  color: #14cbb9;
+}
+
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #0d7377, #14cbb9);
+  color: white;
+  padding: 20px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 15px 15px 0 0;
+}
+
+.modal-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.3s;
+}
+
+.close-btn:hover {
+  transform: rotate(90deg);
+}
+
+/* Form Styles */
+#eventForm {
+  padding: 25px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-group label i {
+  color: #0d7377;
+  font-size: 16px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="datetime-local"],
+.form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #0d7377;
+  box-shadow: 0 0 0 3px rgba(13, 115, 119, 0.1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.color-picker {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 15px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.color-picker:hover {
+  border-color: #0d7377;
+}
+
+.color-picker input[type="color"] {
+  width: 50px;
+  height: 40px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.color-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.checkbox-group {
+  margin-top: 10px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #333;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #0d7377;
+}
+
+/* Modal Footer */
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 2px solid #f3f4f6;
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0d7377, #14cbb9);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(13, 115, 119, 0.3);
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #666;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .calendar-wrapper {
+    border-radius: 10px;
+  }
+
+  .calendar-header {
+    padding: 20px;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .header-left {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .header-left h1 {
+    font-size: 24px;
+  }
+
+  .calendar-container {
+    padding: 15px;
+  }
+
+  .fc .fc-toolbar {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+
+  .header-left h1 {
+    font-size: 20px;
+  }
+
+  .btn-add-event {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .fc .fc-button {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 18px;
+  }
+}
+</style>
+  </head>
+  <body>
+    <!-- Search Overlay Modal -->
+    <div class="search-overlay" id="searchOverlay">
+      <div class="search-modal">
+        <div class="search-modal-header">
+          <input
+            type="text"
+            class="search-modal-input"
+            id="searchModalInput"
+            placeholder="Search Colleges, Courses, Exams, QnA, & Articles"
+            autofocus
+          />
+          <button class="search-modal-button" id="searchModalButton">
+            <i class="fas fa-search"></i> Search
+          </button>
+          <button
+            class="close-search"
+            id="closeSearch"
+            aria-label="Close search"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="search-modal-content">
+          <!-- Recent Searches -->
+          <div class="search-section">
+            <div class="search-section-header">
+              <i class="fas fa-history"></i>
+              RECENT SEARCHES
+              <a href="#" class="clear-all" id="clearRecent">Clear All</a>
+            </div>
+            <div class="search-items" id="recentSearches">
+              <div
+                class="search-item"
+                data-search="Maharashtra State Board (MSBSHSE) News"
+              >
+                <span class="search-item-text"
+                  >Maharashtra State Board (MSBSHSE) News</span
+                >
+                <span class="search-item-tag">Exam</span>
+              </div>
+              <div
+                class="search-item"
+                data-search="What is the latest news about APTET exam?"
+              >
+                <span class="search-item-text"
+                  >What is the latest news about APTET exam?</span
+                >
+                <span class="search-item-tag">Question</span>
+              </div>
+              <div class="search-item" data-search="AIBE News">
+                <span class="search-item-text">AIBE News</span>
+                <span class="search-item-tag">Exam</span>
+              </div>
+              <div class="search-item" data-search="TS SSC News">
+                <span class="search-item-text">TS SSC News</span>
+                <span class="search-item-tag">Exam</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trending Searches -->
+          <div class="search-section">
+            <div class="search-section-header">
+              <i class="fas fa-fire"></i>
+              TRENDING SEARCHES
+            </div>
+            <div class="search-items" id="trendingSearches">
+              <div class="search-item" data-search="B.E. / B.Tech">
+                <span class="search-item-text">B.E. / B.Tech</span>
+                <span class="search-item-tag">Colleges</span>
+              </div>
+              <div class="search-item" data-search="BBA">
+                <span class="search-item-text">BBA</span>
+                <span class="search-item-tag">Colleges</span>
+              </div>
+              <div
+                class="search-item"
+                data-search="IIT Bombay - Indian Institute of Technology"
+              >
+                <span class="search-item-text"
+                  >IIT Bombay - Indian Institute of Technology</span
+                >
+                <span class="search-item-tag">College</span>
+              </div>
+              <div class="search-item" data-search="BCA">
+                <span class="search-item-text">BCA</span>
+                <span class="search-item-tag">Colleges</span>
+              </div>
+              <div class="search-item" data-search="MBA">
+                <span class="search-item-text">MBA</span>
+                <span class="search-item-tag">Colleges</span>
+              </div>
+              <div class="search-item" data-search="JEE Main">
+                <span class="search-item-text">JEE Main</span>
+                <span class="search-item-tag">Exam</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chatbot Widget -->
+    <div class="chatbot-container">
+      <div class="chatbot-window" id="chatbotWindow">
+        <div class="chatbot-header">
+          <div class="chatbot-avatar">
+            <i class="fas fa-robot"></i>
+          </div>
+          <div class="chatbot-info">
+            <div class="chatbot-title">TanAdvisor Assistant</div>
+            <div class="chatbot-status">
+              <span class="status-dot"></span>
+              Online
+            </div>
+          </div>
+          <button class="chatbot-close" id="chatbotClose">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="chatbot-messages" id="chatbotMessages">
+          <div class="message bot">
+            <div class="message-bubble">
+              Hi! 👋 I'm your TanAdvisor Assistant. How can I help you today?
+            </div>
+            <div class="message-time">Just now</div>
+          </div>
+          <div class="quick-replies" id="quickReplies">
+            <button class="quick-reply-btn" data-reply="Find colleges">
+              Find colleges
+            </button>
+            <button class="quick-reply-btn" data-reply="Compare courses">
+              Compare courses
+            </button>
+            <button class="quick-reply-btn" data-reply="Admission process">
+              Admission process
+            </button>
+            <button class="quick-reply-btn" data-reply="Exam information">
+              Exam information
+            </button>
+          </div>
+          <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+
+        <div class="chatbot-input-area">
+          <input
+            type="text"
+            class="chatbot-input"
+            id="chatbotInput"
+            placeholder="Type your message..."
+          />
+          <button class="chatbot-send-btn" id="chatbotSend">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+
+      <button class="chatbot-button" id="chatbotButton">
+        <i class="fas fa-comments"></i>
+        <span class="chatbot-badge">1</span>
+      </button>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+      <a href="#" class="logo">
+        <div class="logo-icon">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+        <span>tanadvisor</span>
+      </a>
+
+      <div class="search-container">
+        <input
+          type="text"
+          class="search-input"
+          id="headerSearchInput"
+          placeholder="Search Colleges, Courses, Exams, Q&A, & Articles"
+          readonly
+          aria-label="Search"
+        />
+        <button class="search-button" id="headerSearchButton">
+          <i class="fas fa-search"></i> Search
+        </button>
+      </div>
+
+      <div class="auth-buttons">
+        <a href="#login">Login</a>
+        <a href="#signup">Sign Up</a>
+      </div>
+
+      <div class="mobile-menu-toggle">
+        <i class="fas fa-bars"></i>
+      </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-menu">
+      <a href="#mba"><i class="fas fa-briefcase"></i> MBA ▼</a>
+      <a href="#engineering"><i class="fas fa-cogs"></i> ENGINEERING ▼</a>
+      <a href="#medical"><i class="fas fa-stethoscope"></i> MEDICAL ▼</a>
+      <a href="#design"><i class="fas fa-palette"></i> DESIGN ▼</a>
+      <a href="#more"><i class="fas fa-plus"></i> MORE ▼</a>
+      <a href="#study-abroad"><i class="fas fa-globe"></i> STUDY ABROAD ▼</a>
+      <a href="#counseling"><i class="fas fa-user-tie"></i> COUNSELING ▼</a>
+      <a href="#online"><i class="fas fa-laptop"></i> TANADVISOR ONLINE ▼</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="comparison-visual">
+          <div class="scale-illustration">
+            <div class="scale-top"></div>
+            <div class="scale-pole"></div>
+            <div class="scale-arm"></div>
+            <div class="building building-1">
+              <div class="building-icon">🏢</div>
+              <div class="building-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+              </div>
+            </div>
+            <div class="building building-2">
+              <div class="building-icon">🏫</div>
+              <div class="building-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-text">
+          <h1>
+            Confused in finalizing your <span class="highlight">college</span>?
+          </h1>
+          <h2>
+            Compare them on
+            <span class="subtext">fees, placements & rankings</span>
+          </h2>
+          <a href="#compare" class="cta-button">
+            <i class="fas fa-balance-scale"></i> Compare colleges!
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Compare Colleges Section -->
+    <section class="compare-section" id="compare">
+      <div class="compare-container">
+        <div class="compare-header">
+          <h3>
+            <i class="fas fa-sliders-h"></i>
+            Compare Colleges
+          </h3>
+          <a href="#details">
+            View Details <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="preferences-grid">
+          <div class="preference-item">
+            <h4><i class="fas fa-user"></i> Your Preferences:</h4>
+            <p>Customize your search</p>
+          </div>
+          <div class="preference-item">
+            <h4><i class="fas fa-stream"></i> Stream</h4>
+            <p>Boards</p>
+          </div>
+          <div class="preference-item">
+            <h4><i class="fas fa-book"></i> Programme</h4>
+            <p>B.Tech, Boards-12th</p>
+          </div>
+          <div class="preference-item">
+            <h4><i class="fas fa-map-marker-alt"></i> Preferred Location</h4>
+            <p>All India</p>
+          </div>
+          <div class="preference-item">
+            <h4><i class="fas fa-clipboard-list"></i> Exams Interested in</h4>
+            <p>JEE, NEET, CAT</p>
+          </div>
+          <div class="preference-item">
+            <h4><i class="fas fa-calendar-alt"></i> Admission Year</h4>
+            <p>2025-2026</p>
+          </div>
+          <div class="preference-item">
+            <h4><i class="fas fa-graduation-cap"></i> Education Mode</h4>
+            <p>Full Time / Online</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+      <div class="features-container">
+        <h2 class="section-title">Why Choose TanAdvisor?</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <h3>Comprehensive Search</h3>
+            <p>
+              Access information on thousands of colleges, courses, and exams
+              across India and abroad.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3>Detailed Rankings</h3>
+            <p>
+              Make informed decisions with our detailed rankings based on
+              placements, faculty, and infrastructure.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-comments"></i>
+            </div>
+            <h3>Expert Counseling</h3>
+            <p>
+              Get personalized guidance from education experts to choose the
+              right career path.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-star"></i>
+            </div>
+            <h3>Student Reviews</h3>
+            <p>
+              Read authentic reviews from current students and alumni to get
+              real insights.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-rupee-sign"></i>
+            </div>
+            <h3>Fee Comparison</h3>
+            <p>
+              Compare tuition fees, scholarships, and financial aid options
+              across institutions.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-medal"></i>
+            </div>
+            <h3>Placement Records</h3>
+            <p>
+              Access detailed placement statistics including average packages
+              and top recruiters.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section">
+      <div class="stats-container">
+        <div class="stat-item">
+          <span class="stat-number">5000+</span>
+          <span class="stat-label">Colleges Listed</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">10M+</span>
+          <span class="stat-label">Students Helped</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">500+</span>
+          <span class="stat-label">Courses Available</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">95%</span>
+          <span class="stat-label">Satisfaction Rate</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2>Ready to Find Your Dream College?</h2>
+      <p>
+        Join thousands of students who have found their perfect educational
+        match with TanAdvisor
+      </p>
+      <div class="cta-buttons">
+        <a href="#signup" class="btn-primary">Get Started Now</a>
+        <a href="#about" class="btn-secondary">Learn More</a>
+      </div>
+    </section>
+   <section class="exam-news-section">
+  <div class="section-header">
+    <h2 class="section-title">Recommended Exam News</h2>
+    <div class="news-tabs">
+      <button class="news-tab active" data-tab="latest">Latest News</button>
+      <button class="news-tab" data-tab="popular">Popular News</button>
+    </div>
+  </div>
+
+  <!-- Main Content Wrapper -->
+  <div class="news-content-wrapper">
+    <!-- Left Side: News Grid (2/3) -->
+    <div class="news-main-section">
+      <div class="news-grid" id="newsGrid">
+        <!-- News Card 1 - Live -->
+        <div class="news-card">
+          <div class="news-image">
+            <img
+              src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=300&fit=crop"
+              alt="JEE Mains 2026"
+            />
+          </div>
+          <div class="news-content">
+            <div>
+              <span class="news-badge live">LIVE</span>
+              <h3 class="news-title">
+                JEE Mains 2026 Registration Live Updates: New Rules, Mistakes to
+                Avoid, Documents Needed
+              </h3>
+            </div>
+            <div class="news-meta">
+              <div class="news-meta-item">
+                <i class="far fa-user"></i>
+                <span>Mamona Majumder</span>
+              </div>
+              <div class="news-meta-item">
+                <i class="far fa-calendar"></i>
+                <span>Nov 5, 2025</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- News Card 2 -->
+        <div class="news-card">
+          <div class="news-image">
+            <img
+              src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop"
+              alt="JEE Mains 2025"
+            />
+          </div>
+          <div class="news-content">
+            <div>
+              <h3 class="news-title">
+                JEE Mains 2025 Question Paper with Solutions: Get Shift-wise
+                Question Papers Here
+              </h3>
+            </div>
+            <div class="news-meta">
+              <div class="news-meta-item">
+                <i class="far fa-user"></i>
+                <span>Samvrigh Mishra</span>
+              </div>
+              <div class="news-meta-item">
+                <i class="far fa-calendar"></i>
+                <span>Nov 4, 2025</span>
+              </div>
+              <div class="news-views">
+                <i class="far fa-eye"></i> 4.5K Views
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- News Card 3 -->
+        <div class="news-card">
+          <div class="news-image">
+            <img
+              src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&h=300&fit=crop"
+              alt="JEE Main 2026"
+            />
+          </div>
+          <div class="news-content">
+            <div>
+              <h3 class="news-title">
+                JEE Main 2026 Name and Photo Authentication Using Aadhaar Card:
+                Problems and Solutions
+              </h3>
+            </div>
+            <div class="news-meta">
+              <div class="news-meta-item">
+                <i class="far fa-user"></i>
+                <span>Mamona Majumder</span>
+              </div>
+              <div class="news-meta-item">
+                <i class="far fa-calendar"></i>
+                <span>Nov 4, 2025</span>
+              </div>
+              <div class="news-views"><i class="far fa-eye"></i> 42 Views</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- News Card 4 -->
+        <div class="news-card">
+          <div class="news-image">
+            <img
+              src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=300&fit=crop"
+              alt="KEAM 2024 Toppers"
+            />
+          </div>
+          <div class="news-content">
+            <div>
+              <h3 class="news-title">
+                KEAM 2024 Toppers (OUT): Check Category and District Wise
+                Toppers Here
+              </h3>
+            </div>
+            <div class="news-meta">
+              <div class="news-meta-item">
+                <i class="far fa-user"></i>
+                <span>Mamona Majumder</span>
+              </div>
+              <div class="news-meta-item">
+                <i class="far fa-calendar"></i>
+                <span>Nov 4, 2025</span>
+              </div>
+              <div class="news-views">
+                <i class="far fa-eye"></i> 19.3K Views
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="view-all-btn">
+        <button>
+          View all News & Updates
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Side: Advertisement Section (1/3) -->
+    <aside class="news-sidebar">
+      <div class="sidebar-ad-container">
+        <div class="ad-label">Advertisement</div>
+        
+        <!-- Ad Spot 1 -->
+        <div class="ad-box">
+          <div class="ad-placeholder">
+            <i class="fas fa-ad"></i>
+            <p>300 x 250</p>
+          </div>
+        </div>
+
+        <!-- Ad Spot 2 -->
+        <div class="ad-box">
+          <div class="ad-placeholder">
+            <i class="fas fa-ad"></i>
+            <p>300 x 600</p>
+          </div>
+        </div>
+
+        <!-- Sticky Ad Spot -->
+        <div class="ad-box sticky-ad">
+          <div class="ad-placeholder">
+            <i class="fas fa-ad"></i>
+            <p>300 x 250</p>
+            <span class="sticky-label">Sticky</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+ <!-- Calendar Container -->
+  <div class="calendar-wrapper">
+    <div class="calendar-header">
+      <div class="header-content">
+        <div class="header-left">
+          <i class="fas fa-calendar-alt"></i>
+          <h1>Event Calendar</h1>
+        </div>
+        <button class="btn-add-event" id="addEventBtn">
+          <i class="fas fa-plus"></i> Add Event
+        </button>
+      </div>
+    </div>
+
+    <div class="calendar-container">
+      <div id="calendar"></div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Event Modal -->
+  <div class="modal" id="eventModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Add New Event</h2>
+        <button class="close-btn" id="closeModal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <form id="eventForm">
+        <div class="form-group">
+          <label for="eventTitle">
+            <i class="fas fa-heading"></i> Event Title
+          </label>
+          <input type="text" id="eventTitle" required placeholder="Enter event title">
+        </div>
+
+        <div class="form-group">
+          <label for="eventDescription">
+            <i class="fas fa-align-left"></i> Description
+          </label>
+          <textarea id="eventDescription" rows="3" placeholder="Event description (optional)"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="eventStart">
+              <i class="fas fa-calendar-day"></i> Start Date
+            </label>
+            <input type="datetime-local" id="eventStart" required>
+          </div>
+
+          <div class="form-group">
+            <label for="eventEnd">
+              <i class="fas fa-calendar-check"></i> End Date
+            </label>
+            <input type="datetime-local" id="eventEnd" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="eventColor">
+            <i class="fas fa-palette"></i> Event Color
+          </label>
+          <div class="color-picker">
+            <input type="color" id="eventColor" value="#0d7377">
+            <span class="color-label">Choose color</span>
+          </div>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="allDay">
+            <span>All Day Event</span>
+          </label>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveEventBtn">
+            <i class="fas fa-save"></i> Save Event
+          </button>
+          <button type="button" class="btn btn-danger" id="deleteEventBtn" style="display: none;">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-column">
+          <h4>About TanAdvisor</h4>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#team">Our Team</a></li>
+            <li><a href="#careers">Careers</a></li>
+            <li><a href="#press">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Popular Courses</h4>
+          <ul>
+            <li><a href="#mba">MBA Programs</a></li>
+            <li><a href="#engineering">Engineering</a></li>
+            <li><a href="#medical">Medical</a></li>
+            <li><a href="#law">Law</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Top Colleges</h4>
+          <ul>
+            <li><a href="#iits">IITs</a></li>
+            <li><a href="#nits">NITs</a></li>
+            <li><a href="#iims">IIMs</a></li>
+            <li><a href="#private">Private Colleges</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#blog">Blog</a></li>
+            <li><a href="#guides">Study Guides</a></li>
+            <li><a href="#news">Education News</a></li>
+            <li><a href="#qa">Q&A Forum</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Connect With Us</h4>
+          <div class="social-links">
+            <a href="#facebook" aria-label="Facebook"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a href="#twitter" aria-label="Twitter"
+              ><i class="fab fa-twitter"></i
+            ></a>
+            <a href="#linkedin" aria-label="LinkedIn"
+              ><i class="fab fa-linkedin-in"></i
+            ></a>
+            <a href="#instagram" aria-label="Instagram"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a href="#youtube" aria-label="YouTube"
+              ><i class="fab fa-youtube"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          &copy; 2025 TanAdvisor. All rights reserved. |
+          <a href="#privacy" style="color: #999">Privacy Policy</a> |
+          <a href="#terms" style="color: #999">Terms of Service</a>
+        </p>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+      <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript -->
+      <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+  
+    <script>
+      // Chatbot functionality
+      const chatbotButton = document.getElementById("chatbotButton");
+      const chatbotWindow = document.getElementById("chatbotWindow");
+      const chatbotClose = document.getElementById("chatbotClose");
+      const chatbotMessages = document.getElementById("chatbotMessages");
+      const chatbotInput = document.getElementById("chatbotInput");
+      const chatbotSend = document.getElementById("chatbotSend");
+      const typingIndicator = document.getElementById("typingIndicator");
+      const chatbotBadge = document.querySelector(".chatbot-badge");
+
+      // Toggle chatbot window
+      chatbotButton.addEventListener("click", function () {
+        chatbotWindow.classList.toggle("active");
+        chatbotButton.classList.toggle("active");
+        if (chatbotWindow.classList.contains("active")) {
+          chatbotInput.focus();
+          chatbotBadge.style.display = "none";
+        }
+      });
+
+      chatbotClose.addEventListener("click", function () {
+        chatbotWindow.classList.remove("active");
+        chatbotButton.classList.remove("active");
+      });
+
+      // Get current time
+      function getCurrentTime() {
+        const now = new Date();
+        return now.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        });
+      }
+
+      // Add message to chat
+      function addMessage(text, isUser = false) {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${isUser ? "user" : "bot"}`;
+
+        messageDiv.innerHTML = `
+                <div class="message-bubble">${text}</div>
+                <div class="message-time">${getCurrentTime()}</div>
+            `;
+
+        chatbotMessages.insertBefore(messageDiv, typingIndicator);
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+      }
+
+      // Show typing indicator
+      function showTyping() {
+        typingIndicator.classList.add("active");
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+      }
+
+      // Hide typing indicator
+      function hideTyping() {
+        typingIndicator.classList.remove("active");
+      }
+
+      // Bot responses database
+      const botResponses = {
+        "find colleges":
+          "I can help you find colleges! What course or stream are you interested in? (Engineering, Medical, MBA, etc.)",
+        "compare courses":
+          "Great! Which courses would you like to compare? Please provide the course names.",
+        "admission process":
+          "The admission process typically involves:\n1. Entrance exam registration\n2. Appearing for the exam\n3. Counseling process\n4. Document verification\n5. Fee payment\n\nWhich specific exam or college admission are you interested in?",
+        "exam information":
+          "We have information on various exams like JEE, NEET, CAT, GATE, and more. Which exam would you like to know about?",
+        default:
+          "I understand you're looking for information. Could you please be more specific? You can ask me about:\n• Finding colleges\n• Comparing courses\n• Admission process\n• Exam information\n• Fee structure\n• Placements",
+      };
+
+      // Get bot response
+      function getBotResponse(userMessage) {
+        const message = userMessage.toLowerCase();
+
+        // Check for keywords
+        for (const [key, response] of Object.entries(botResponses)) {
+          if (message.includes(key)) {
+            return response;
+          }
+        }
+
+        // Check for greetings
+        if (
+          message.match(
+            /\b(hi|hello|hey|good morning|good afternoon|good evening)\b/
+          )
+        ) {
+          return "Hello! 👋 How can I assist you with your college search today?";
+        }
+
+        // Check for thanks
+        if (message.match(/\b(thank|thanks|appreciate)\b/)) {
+          return "You're welcome! Feel free to ask if you have any more questions. 😊";
+        }
+
+        // Check for fee-related queries
+        if (
+          message.includes("fee") ||
+          message.includes("cost") ||
+          message.includes("price")
+        ) {
+          return "I can help you with fee information! Which college or course are you interested in?";
+        }
+
+        // Check for placement-related queries
+        if (
+          message.includes("placement") ||
+          message.includes("job") ||
+          message.includes("salary")
+        ) {
+          return "I can provide placement statistics! Which college would you like to know about?";
+        }
+
+        return botResponses.default;
+      }
+
+      // Send message
+      function sendMessage() {
+        const message = chatbotInput.value.trim();
+        if (!message) return;
+
+        // Add user message
+        addMessage(message, true);
+        chatbotInput.value = "";
+
+        // Hide quick replies after first message
+        const quickReplies = document.getElementById("quickReplies");
+        if (quickReplies) {
+          quickReplies.style.display = "none";
+        }
+
+        // Show typing indicator
+        showTyping();
+
+        // Simulate bot response delay
+        setTimeout(() => {
+          hideTyping();
+          const response = getBotResponse(message);
+          addMessage(response);
+        }, 1000 + Math.random() * 1000);
+      }
+
+      // Send button click
+      chatbotSend.addEventListener("click", sendMessage);
+
+      // Enter key to send
+      chatbotInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          sendMessage();
+        }
+      });
+
+      // Quick reply buttons
+      document.querySelectorAll(".quick-reply-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+          const reply = this.getAttribute("data-reply");
+          chatbotInput.value = reply;
+          sendMessage();
+        });
+      });
+
+      // Search Overlay functionality
+      const searchOverlay = document.getElementById("searchOverlay");
+      const headerSearchInput = document.getElementById("headerSearchInput");
+      const headerSearchButton = document.getElementById("headerSearchButton");
+      const closeSearch = document.getElementById("closeSearch");
+      const searchModalInput = document.getElementById("searchModalInput");
+      const searchModalButton = document.getElementById("searchModalButton");
+
+      // Open search overlay
+      function openSearchOverlay() {
+        searchOverlay.classList.add("active");
+        document.body.style.overflow = "hidden";
+        setTimeout(() => {
+          searchModalInput.focus();
+        }, 300);
+      }
+
+      headerSearchInput.addEventListener("click", openSearchOverlay);
+      headerSearchButton.addEventListener("click", openSearchOverlay);
+
+      // Close search overlay
+      function closeSearchOverlay() {
+        searchOverlay.classList.remove("active");
+        document.body.style.overflow = "auto";
+      }
+
+      closeSearch.addEventListener("click", closeSearchOverlay);
+
+      // Close when clicking outside
+      searchOverlay.addEventListener("click", function (e) {
+        if (e.target === searchOverlay) {
+          closeSearchOverlay();
+        }
+      });
+
+      // Close with Escape key
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          if (searchOverlay.classList.contains("active")) {
+            closeSearchOverlay();
+          }
+          if (chatbotWindow.classList.contains("active")) {
+            chatbotWindow.classList.remove("active");
+            chatbotButton.classList.remove("active");
+          }
+        }
+      });
+
+      // Search functionality
+      searchModalButton.addEventListener("click", function () {
+        const query = searchModalInput.value.trim();
+        if (query) {
+          performSearch(query);
+        }
+      });
+
+      searchModalInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          const query = searchModalInput.value.trim();
+          if (query) {
+            performSearch(query);
+          }
+        }
+      });
+
+      function performSearch(query) {
+        console.log("Searching for:", query);
+        addToRecentSearches(query);
+        alert(`Searching for: ${query}`);
+        closeSearchOverlay();
+      }
+
+      // Handle search item clicks
+      document.querySelectorAll(".search-item").forEach((item) => {
+        item.addEventListener("click", function () {
+          const searchText = this.getAttribute("data-search");
+          searchModalInput.value = searchText;
+          performSearch(searchText);
+        });
+      });
+
+      // Clear recent searches
+      const clearRecent = document.getElementById("clearRecent");
+      clearRecent.addEventListener("click", function (e) {
+        e.preventDefault();
+        const recentSearches = document.getElementById("recentSearches");
+        recentSearches.innerHTML =
+          '<div style="padding: 20px; text-align: center; color: #999;">No recent searches</div>';
+      });
+
+      // Add to recent searches
+      function addToRecentSearches(query) {
+        const recentSearches = document.getElementById("recentSearches");
+        const newItem = document.createElement("div");
+        newItem.className = "search-item";
+        newItem.setAttribute("data-search", query);
+        newItem.innerHTML = `
+                <span class="search-item-text">${query}</span>
+                <span class="search-item-tag">Search</span>
+            `;
+        newItem.addEventListener("click", function () {
+          searchModalInput.value = query;
+          performSearch(query);
+        });
+        recentSearches.insertBefore(newItem, recentSearches.firstChild);
+      }
+
+      // Scroll to Top Functionality
+      const scrollTopBtn = document.getElementById("scrollTop");
+
+      window.addEventListener("scroll", () => {
+        if (window.pageYOffset > 300) {
+          scrollTopBtn.classList.add("show");
+        } else {
+          scrollTopBtn.classList.remove("show");
+        }
+      });
+
+      scrollTopBtn.addEventListener("click", () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      });
+
+      // Header scroll effect
+      const header = document.getElementById("header");
+      window.addEventListener("scroll", () => {
+        if (window.pageYOffset > 50) {
+          header.classList.add("scrolled");
+        } else {
+          header.classList.remove("scrolled");
+        }
+      });
+
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          const href = this.getAttribute("href");
+          if (href !== "#" && href !== "#login" && href !== "#signup") {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) {
+              target.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            }
+          }
+        });
+      });
+
+      // Mobile menu toggle
+      const mobileMenuToggle = document.querySelector(".mobile-menu-toggle");
+      const navMenu = document.querySelector(".nav-menu");
+
+      if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener("click", () => {
+          if (navMenu.style.display === "flex") {
+            navMenu.style.display = "none";
+          } else {
+            navMenu.style.display = "flex";
+          }
+        });
+      }
+
+      // Animate stats on scroll
+      const observerOptions = {
+        threshold: 0.5,
+        rootMargin: "0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const statNumbers = entry.target.querySelectorAll(".stat-number");
+            statNumbers.forEach((stat) => {
+              const target = stat.textContent;
+              stat.textContent = "0";
+              animateValue(stat, 0, parseInt(target), 2000);
+            });
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      const statsSection = document.querySelector(".stats-section");
+      if (statsSection) {
+        observer.observe(statsSection);
+      }
+
+      function animateValue(element, start, end, duration) {
+        const range = end - start;
+        const increment = range / (duration / 16);
+        let current = start;
+        const suffix = element.textContent.replace(/[0-9]/g, "");
+
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= end) {
+            element.textContent = end + suffix;
+            clearInterval(timer);
+          } else {
+            element.textContent = Math.floor(current) + suffix;
+          }
+        }, 16);
+      }
+
+      // Show chatbot notification after 5 seconds
+      setTimeout(() => {
+        if (!chatbotWindow.classList.contains("active")) {
+          chatbotBadge.style.display = "flex";
+        }
+      }, 5000);
+      // Make sidebar sticky with scroll limit
+window.addEventListener('scroll', function() {
+  const sidebar = document.querySelector('.sidebar-ad-container');
+  const newsSection = document.querySelector('.exam-news-section');
+  
+  if (sidebar && newsSection) {
+    const sectionBottom = newsSection.offsetTop + newsSection.offsetHeight;
+    const sidebarHeight = sidebar.offsetHeight;
+    const scrollPosition = window.scrollY + window.innerHeight;
+    
+    // Prevent sidebar from going beyond section
+    if (scrollPosition > sectionBottom) {
+      sidebar.style.position = 'absolute';
+      sidebar.style.bottom = '0';
+      sidebar.style.top = 'auto';
+    } else {
+      sidebar.style.position = 'sticky';
+      sidebar.style.top = '20px';
+      sidebar.style.bottom = 'auto';
+    }
+  }
+});
+
+// Tab switching functionality
+const newsTabs = document.querySelectorAll('.news-tab');
+newsTabs.forEach(tab => {
+  tab.addEventListener('click', function() {
+    newsTabs.forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    
+    const tabType = this.getAttribute('data-tab');
+    // Add your logic to filter news by tab type
+    console.log('Selected tab:', tabType);
+  });
+});
+document.addEventListener('DOMContentLoaded', function() {
+  const calendarEl = document.getElementById('calendar');
+  const modal = document.getElementById('eventModal');
+  const addEventBtn = document.getElementById('addEventBtn');
+  const closeModal = document.getElementById('closeModal');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const eventForm = document.getElementById('eventForm');
+  const deleteEventBtn = document.getElementById('deleteEventBtn');
+  const modalTitle = document.getElementById('modalTitle');
+
+  let currentEvent = null;
+  let eventIdCounter = 1;
+
+  // Sample events data (you can replace this with your database data)
+  let events = [
+    {
+      id: eventIdCounter++,
+      title: 'Team Meeting',
+      start: '2025-11-15T10:00:00',
+      end: '2025-11-15T11:00:00',
+      backgroundColor: '#0d7377',
+      description: 'Quarterly team sync-up meeting'
+    },
+    {
+      id: eventIdCounter++,
+      title: 'Project Deadline',
+      start: '2025-11-20',
+      backgroundColor: '#ef4444',
+      allDay: true,
+      description: 'Final project submission'
+    },
+    {
+      id: eventIdCounter++,
+      title: 'Client Presentation',
+      start: '2025-11-18T14:00:00',
+      end: '2025-11-18T16:00:00',
+      backgroundColor: '#f57c00',
+      description: 'Present new designs to client'
+    },
+    {
+      id: eventIdCounter++,
+      title: 'Workshop',
+      start: '2025-11-22T09:00:00',
+      end: '2025-11-22T12:00:00',
+      backgroundColor: '#8b5cf6',
+      description: 'React development workshop'
+    }
+  ];
+
+  // Initialize FullCalendar
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+    },
+    buttonText: {
+      today: 'Today',
+      month: 'Month',
+      week: 'Week',
+      day: 'Day',
+      list: 'List'
+    },
+    height: 'auto',
+    editable: true,
+    selectable: true,
+    selectMirror: true,
+    dayMaxEvents: true,
+    weekends: true,
+    nowIndicator: true,
+    events: events,
+
+    // Handle date selection
+    select: function(info) {
+      openModal('add', info.start, info.end, info.allDay);
+    },
+
+    // Handle event click
+    eventClick: function(info) {
+      currentEvent = info.event;
+      openModal('edit', null, null, null, info.event);
+    },
+
+    // Handle event drag and drop
+    eventDrop: function(info) {
+      updateEventInArray(info.event);
+      showNotification('Event updated successfully!', 'success');
+    },
+
+    // Handle event resize
+    eventResize: function(info) {
+      updateEventInArray(info.event);
+      showNotification('Event duration updated!', 'success');
+    }
+  });
+
+  calendar.render();
+
+  // Open modal for add or edit
+  function openModal(mode, startDate, endDate, allDay, event = null) {
+    modal.classList.add('active');
+    document.getElementById('eventTitle').value = '';
+    document.getElementById('eventDescription').value = '';
+    document.getElementById('eventColor').value = '#0d7377';
+    document.getElementById('allDay').checked = false;
+
+    if (mode === 'add') {
+      modalTitle.textContent = 'Add New Event';
+      deleteEventBtn.style.display = 'none';
+      
+      const startDatetime = formatDateForInput(startDate);
+      const endDatetime = formatDateForInput(endDate);
+      
+      document.getElementById('eventStart').value = startDatetime;
+      document.getElementById('eventEnd').value = endDatetime;
+      document.getElementById('allDay').checked = allDay;
+      currentEvent = null;
+    } else if (mode === 'edit' && event) {
+      modalTitle.textContent = 'Edit Event';
+      deleteEventBtn.style.display = 'block';
+      
+      document.getElementById('eventTitle').value = event.title;
+      document.getElementById('eventDescription').value = event.extendedProps.description || '';
+      document.getElementById('eventStart').value = formatDateForInput(event.start);
+      document.getElementById('eventEnd').value = formatDateForInput(event.end || event.start);
+      document.getElementById('eventColor').value = event.backgroundColor || '#0d7377';
+      document.getElementById('allDay').checked = event.allDay;
+    }
+  }
+
+  // Close modal
+  function closeModalWindow() {
+    modal.classList.remove('active');
+    currentEvent = null;
+    eventForm.reset();
+  }
+
+  // Format date for datetime-local input
+  function formatDateForInput(date) {
+    if (!date) return '';
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  // Save event (add or update)
+  eventForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const title = document.getElementById('eventTitle').value;
+    const description = document.getElementById('eventDescription').value;
+    const start = document.getElementById('eventStart').value;
+    const end = document.getElementById('eventEnd').value;
+    const color = document.getElementById('eventColor').value;
+    const allDay = document.getElementById('allDay').checked;
+
+    if (currentEvent) {
+      // Update existing event
+      currentEvent.setProp('title', title);
+      currentEvent.setStart(start);
+      currentEvent.setEnd(end);
+      currentEvent.setProp('backgroundColor', color);
+      currentEvent.setAllDay(allDay);
+      currentEvent.setExtendedProp('description', description);
+      
+      updateEventInArray(currentEvent);
+      showNotification('Event updated successfully!', 'success');
+    } else {
+      // Add new event
+      const newEvent = {
+        id: eventIdCounter++,
+        title: title,
+        start: start,
+        end: end,
+        backgroundColor: color,
+        allDay: allDay,
+        description: description
+      };
+      
+      calendar.addEvent(newEvent);
+      events.push(newEvent);
+      showNotification('Event added successfully!', 'success');
+    }
+
+    closeModalWindow();
+  });
+
+  // Delete event
+  deleteEventBtn.addEventListener('click', function() {
+    if (currentEvent && confirm('Are you sure you want to delete this event?')) {
+      const eventId = currentEvent.id;
+      currentEvent.remove();
+      events = events.filter(e => e.id != eventId);
+      showNotification('Event deleted successfully!', 'success');
+      closeModalWindow();
+    }
+  });
+
+  // Update event in array
+  function updateEventInArray(event) {
+    const index = events.findIndex(e => e.id == event.id);
+    if (index !== -1) {
+      events[index] = {
+        id: event.id,
+        title: event.title,
+        start: event.start.toISOString(),
+        end: event.end ? event.end.toISOString() : event.start.toISOString(),
+        backgroundColor: event.backgroundColor,
+        allDay: event.allDay,
+        description: event.extendedProps.description
+      };
+    }
+  }
+
+  // Show notification
+  function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${type === 'success' ? '#10b981' : '#ef4444'};
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 10000;
+      animation: slideIn 0.3s ease;
+      font-weight: 600;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+  // Add notification animations
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Event listeners
+  addEventBtn.addEventListener('click', function() {
+    const today = new Date();
+    openModal('add', today, new Date(today.getTime() + 60*60*1000), false);
+  });
+
+  closeModal.addEventListener('click', closeModalWindow);
+  cancelBtn.addEventListener('click', closeModalWindow);
+
+  // Close modal on outside click
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      closeModalWindow();
+    }
+  });
+
+  // Keyboard shortcut to close modal
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeModalWindow();
+    }
+  });
+
+  console.log('Calendar initialized successfully!');
+});
+
+    </script>
+  </body>
+</html>
